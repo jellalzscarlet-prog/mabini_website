@@ -1,13 +1,19 @@
+
 import { Link } from "react-router-dom";
+
 const groups = [
   ["Municipal Mayor", "Mayor.jpg", "/mayor"],
-  ["Municipal Vice Mayor", "ViceMayor.jpg", "#"],
+  ["Municipal Vice Mayor", "ViceMayor.jpg", "/vice-mayor"],
   [
     "Municipal Employees",
     "mabini-seal.jpg",
     "/members?group=Municipal%20Employees",
   ],
-  ["Barangay Officials", "barangay.png", "/members?group=Barangay%20Officials"],
+  [
+    "Barangay Officials",
+    "barangay.png",
+    "/members?group=Barangay%20Officials",
+  ],
   [
     "SK Officials (Sangguniang Kabataan)",
     "SK.jpg",
@@ -28,8 +34,13 @@ const groups = [
     "mbp.png",
     "/members?group=Mabini%20Fire%20Station",
   ],
-  ["Job Order (JO) Officials", "jo.jpg", "/members?group=Job%20Order"],
+  [
+    "Job Order (JO) Officials",
+    "jo.jpg",
+    "/members?group=Job%20Order",
+  ],
 ];
+
 export default function Officials() {
   return (
     <section className="section">
@@ -40,6 +51,7 @@ export default function Officials() {
           Meet the officials serving the Municipality of Mabini, Pangasinan.
         </p>
       </div>
+
       <div className="cards">
         {groups.map(([title, img, to]) => (
           <Link to={to} className="card member-card" key={title}>
@@ -48,6 +60,7 @@ export default function Officials() {
               src={`/images/${img}`}
               alt={title}
             />
+
             <div className="card-body">
               <h3>{title}</h3>
               <p>
