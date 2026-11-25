@@ -37,7 +37,6 @@ export default function App() {
 
       <div className={`page-content ${sidebarOpen ? "sidebar-open" : ""}`}>
         <Routes>
-          
           <Route path="/" element={<Home />} />
           <Route path="/mayor" element={<Mayor />} />
           <Route path="/officials" element={<Officials />} />
