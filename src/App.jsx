@@ -1,6 +1,6 @@
 import SupabaseTest from "./pages/SupabaseTest.jsx";
 
-<Route path="/supabase-test" element={<SupabaseTest />} />
+<Route path="/supabase-test" element={<SupabaseTest />} />;
 import { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
@@ -14,6 +14,9 @@ import Officials from "./pages/Officials.jsx";
 import Members from "./pages/Members.jsx";
 import Procurement from "./pages/Procurement.jsx";
 
+import AdminLogin from "./pages/admin/AdminLogin.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import AdminGuard from "./pages/admin/AdminGuard.jsx";
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
@@ -39,10 +42,7 @@ export default function App() {
 
   return (
     <>
-      <Sidebar
-        open={sidebarOpen}
-        onOpenChange={setSidebarOpen}
-      />
+      <Sidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
 
       <div className={`page-content ${sidebarOpen ? "sidebar-open" : ""}`}>
         <Routes>
@@ -52,6 +52,16 @@ export default function App() {
           <Route path="/officials" element={<Officials />} />
           <Route path="/members" element={<Members />} />
           <Route path="/procurement" element={<Procurement />} />
+          <Route path="/admin" element={<AdminLogin />} />
+
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminGuard>
+                <AdminDashboard />
+              </AdminGuard>
+            }
+          />
 
           <Route path="*" element={<Home />} />
         </Routes>
@@ -61,4 +71,3 @@ export default function App() {
     </>
   );
 }
-
