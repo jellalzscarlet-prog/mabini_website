@@ -1,4 +1,5 @@
 import NewsCarousel from "../components/NewsCarousel.jsx";
+
 const places = [
   [
     "Balincaguin River",
@@ -26,6 +27,7 @@ const places = [
     "cacupangan cave.jpg",
   ],
 ];
+
 const services = [
   [
     "Business Permits",
@@ -37,6 +39,7 @@ const services = [
   ],
   ["Health Services", "Updates about local health programs and services."],
 ];
+
 const hotlines = [
   ["Mabini Hotline", "0912 410 6665"],
   ["Ambulance", "0912 410 6665", "0921 732 8097"],
@@ -52,9 +55,11 @@ const hotlines = [
     "0998 546 5748",
   ],
 ];
+
 export default function Home() {
   return (
     <main>
+      {/* HOME */}
       <section id="home" className="hero">
         <img src="/images/welcome-mabini.jpg" alt="Welcome to Mabini sign" />
         <div className="hero-shade" />
@@ -69,6 +74,8 @@ export default function Home() {
           </a>
         </div>
       </section>
+
+      {/* ABOUT MABINI */}
       <section id="about" className="section about">
         <div className="about-photo">
           <img
@@ -87,6 +94,17 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      {/* NEWS & EVENTS - MOVED ABOVE FEATURED PLACES */}
+      <section id="news" className="section pale">
+        <div className="section-heading">
+          <p className="eyebrow green">FROM OUR COMMUNITY</p>
+          <h2>News &amp; Community Events</h2>
+        </div>
+        <NewsCarousel />
+      </section>
+
+      {/* FEATURED PLACES */}
       <section id="places" className="section pale">
         <div className="section-heading">
           <p className="eyebrow green">EXPLORE THE COMMUNITY</p>
@@ -104,6 +122,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* MUNICIPAL SERVICES */}
       <section id="services" className="section">
         <div className="section-heading">
           <p className="eyebrow green">PUBLIC INFORMATION</p>
@@ -123,13 +143,8 @@ export default function Home() {
           details, and official contact information before publishing.
         </p>
       </section>
-      <section id="news" className="section pale">
-        <div className="section-heading">
-          <p className="eyebrow green">FROM OUR COMMUNITY</p>
-          <h2>News &amp; Community Events</h2>
-        </div>
-        <NewsCarousel />
-      </section>
+
+      {/* CONTACT */}
       <section id="contact" className="section contact">
         <div className="section-heading">
           <p className="eyebrow green">LOCAL GOVERNMENT UNIT OF MABINI</p>
