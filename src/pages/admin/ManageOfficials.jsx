@@ -8,11 +8,11 @@ const groups = [
   "Municipal Vice Mayor",
   "Municipal Employees",
   "Barangay Officials",
-  "SK Officials",
-  "DepEd Officials",
-  "PNP Officials",
-  "Mabini Fire Station",
-  "Job Order",
+  "SK Officials (Sangguniang Kabataan)",
+  "Department of Education (DepEd) Officials",
+  "Philippine National Police (PNP) Officials",
+  "MFS (Mabini Fire Station) Officials",
+  "Job Order (JO) Officials",
 ];
 
 const emptyForm = {
