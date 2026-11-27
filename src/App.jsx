@@ -44,7 +44,7 @@ export default function App() {
           <Route path="/members" element={<Members />} />
           <Route path="/procurement" element={<Procurement />} />
           <Route path="*" element={<Home />} />
-          <Route path="/vice-mayor" element={<ViceMayor />} />
+          <Route path="/ViceMayor" element={<ViceMayor />} />
         </Routes>
 
         <Footer />
