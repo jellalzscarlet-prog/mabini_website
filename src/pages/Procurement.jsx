@@ -4,12 +4,12 @@ export default function Procurement() {
   const items = [
     [
       "Procurement Plan",
-      "View the municipality's procurement plans and planned projects.",
+      "The municipality's procurement plans and planned projects.",
       "/procurement/plan",
     ],
     [
       "Bids",
-      "View bidding opportunities, notices, and procurement results.",
+      "Bidding opportunities, notices, and procurement results.",
       "/procurement/bids",
     ],
   ];
