@@ -4,19 +4,14 @@ import { Link } from "react-router-dom";
 export default function Procurement() {
   const items = [
     [
-      "Annual Procurement Plan",
-      "View the municipality's planned procurement activities and projects.",
-      "/procurement/annual-plan",
+      "Procurement Plan",
+      "View the municipality's procurement plans and planned projects.",
+      "/procurement/plan",
     ],
     [
-      "Procurement Awards",
-      "Information about awarded contracts and procurement activities.",
+      "Awards",
+      "View awarded contracts, winning bidders, and procurement results.",
       "/procurement/awards",
-    ],
-    [
-      "Public Documents",
-      "Access procurement-related documents and public records.",
-      "/procurement/documents",
     ],
   ];
 
@@ -26,9 +21,11 @@ export default function Procurement() {
         <p className="eyebrow green">
           TRANSPARENCY &amp; ACCOUNTABILITY
         </p>
-        <h2>Procurement Plan / Awards</h2>
+
+        <h2>Procurement and Bids</h2>
+
         <p>
-          Public procurement information, plans, notices, and awarded
+          Public procurement plans, bidding information, and awarded
           projects of the Municipality of Mabini.
         </p>
       </div>

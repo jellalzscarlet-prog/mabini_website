@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 
 const categories = [
-  "Annual Procurement Plan",
-  "Procurement Awards",
-  "Public Documents",
+  "Procurement Plan",
+  "Awards",
 ];
 
 const emptyForm = {
