@@ -18,7 +18,7 @@ import AdminGuard from "./pages/admin/AdminGuard.jsx";
 import ManageNews from "./pages/admin/ManageNews.jsx";
 import ManageOfficials from "./pages/admin/ManageOfficials.jsx";
 import ManageProcurement from "./pages/admin/ManageProcurement.jsx";
-
+import ProcurementList from "./pages/ProcurementList.jsx";
 function ComingSoon({ title }) {
   return (
     <main className="admin-dashboard">
@@ -105,6 +105,22 @@ export default function App() {
               <AdminGuard>
                 <ManageOfficials />
               </AdminGuard>
+            }
+          />
+          <Route
+            path="/procurement/plan"
+            element={
+              <ProcurementList
+                category="Procurement Plan"
+                title="Procurement Plan"
+              />
+            }
+          />
+
+          <Route
+            path="/procurement/awards"
+            element={
+              <ProcurementList category="Awards" title="Procurement Awards" />
             }
           />
 

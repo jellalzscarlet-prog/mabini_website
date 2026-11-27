@@ -6,7 +6,7 @@ const links = [
   ["02", "About Mabini", "about"],
   ["03", "News & Events", "news"],
   ["04", "Featured Places", "places"],
-  ["05", "Procurement Plan/Awards", "procurement"],
+  ["05", "Procurement Plan/Bids", "procurement"],
   ["06", "Officials", "officials"],
   ["07", "Services", "services"],
   ["08", "Contact", "contact"]

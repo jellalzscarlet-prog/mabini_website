@@ -4,7 +4,7 @@ import { supabase } from "../../lib/supabaseClient";
 
 const categories = [
   "Procurement Plan",
-  "Awards",
+  "Bids",
 ];
 
 const emptyForm = {
@@ -239,7 +239,7 @@ export default function ManageProcurement() {
       <header className="admin-header">
         <div>
           <p className="eyebrow">CONTENT MANAGEMENT</p>
-          <h1>Manage Procurement & Awards</h1>
+          <h1>Manage Procurement & Bids</h1>
           <p>
             Add, edit, and manage public procurement documents.
           </p>
