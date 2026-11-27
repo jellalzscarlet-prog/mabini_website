@@ -118,10 +118,8 @@ export default function App() {
           />
 
           <Route
-            path="/procurement/awards"
-            element={
-              <ProcurementList category="Awards" title="Procurement Awards" />
-            }
+            path="/procurement/bids"
+            element={<ProcurementList category="Bids" title="Bids" />}
           />
 
           <Route

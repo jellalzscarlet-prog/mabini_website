@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 export default function Procurement() {
@@ -9,24 +8,22 @@ export default function Procurement() {
       "/procurement/plan",
     ],
     [
-      "Awards",
-      "View awarded contracts, winning bidders, and procurement results.",
-      "/procurement/awards",
+      "Bids",
+      "View bidding opportunities, notices, and procurement results.",
+      "/procurement/bids",
     ],
   ];
 
   return (
     <section className="section">
       <div className="section-heading">
-        <p className="eyebrow green">
-          TRANSPARENCY &amp; ACCOUNTABILITY
-        </p>
+        <p className="eyebrow green">TRANSPARENCY &amp; ACCOUNTABILITY</p>
 
         <h2>Procurement and Bids</h2>
 
         <p>
-          Public procurement plans, bidding information, and awarded
-          projects of the Municipality of Mabini.
+          Public procurement plans, bidding information, and awarded projects of
+          the Municipality of Mabini.
         </p>
       </div>
 
