@@ -1,39 +1,46 @@
 
+import { useNavigate, useLocation } from "react-router-dom";
+
 const links = [
-  ['01', 'Home', 'home'],
-  ['02', 'About Mabini', 'about'],
-  ['03', 'News & Events', 'news'],
-  ['04', 'Featured Places', 'places'],
-  ['05', 'Procurement Plan/Awards', 'procurement'],
-  ['06', 'Officials', 'officials'],
-  ['07', 'Services', 'services'],
-  ['08', 'Contact', 'contact']
+  ["01", "Home", "home"],
+  ["02", "About Mabini", "about"],
+  ["03", "News & Events", "news"],
+  ["04", "Featured Places", "places"],
+  ["05", "Procurement Plan/Awards", "procurement"],
+  ["06", "Officials", "officials"],
+  ["07", "Services", "services"],
+  ["08", "Contact", "contact"]
 ];
 
 export default function Sidebar({ open, onOpenChange }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const close = () => onOpenChange(false);
 
   const handleNavigation = (id) => {
     close();
 
-    if (id === 'procurement' || id === 'officials') {
-      window.location.href = `/${id}`;
+    // Navigate to separate pages
+    if (id === "procurement" || id === "officials") {
+      navigate(`/${id}`);
       return;
     }
 
-    if (window.location.pathname !== '/') {
-      window.location.href = `/#${id}`;
+    // Navigate to homepage sections
+    if (location.pathname !== "/") {
+      navigate(`/#${id}`);
       return;
     }
 
-    // Wait for the sidebar layout transition
+    // Scroll to section on homepage
     setTimeout(() => {
       const section = document.getElementById(id);
 
       if (section) {
         section.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
+          behavior: "smooth",
+          block: "start"
         });
       }
     }, 300);
@@ -42,7 +49,7 @@ export default function Sidebar({ open, onOpenChange }) {
   return (
     <>
       <button
-        className={`index-toggle ${open ? 'sidebar-open' : ''}`}
+        className={`index-toggle ${open ? "sidebar-open" : ""}`}
         onClick={() => onOpenChange(!open)}
         aria-label="Toggle navigation"
         aria-expanded={open}
@@ -50,7 +57,7 @@ export default function Sidebar({ open, onOpenChange }) {
         ☰
       </button>
 
-      <aside className={`sidebar ${open ? 'open' : ''}`}>
+      <aside className={`sidebar ${open ? "open" : ""}`}>
         <header className="site-header">
           <img
             src="/images/mabini-seal.jpg"
@@ -80,7 +87,9 @@ export default function Sidebar({ open, onOpenChange }) {
         </nav>
       </aside>
 
-      {open && <div className="sidebar-overlay" onClick={close} />}
+      {open && (
+        <div className="sidebar-overlay" onClick={close} />
+      )}
     </>
   );
 }
