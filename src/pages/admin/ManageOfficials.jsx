@@ -27,6 +27,8 @@ const emptyForm = {
 export default function ManageOfficials() {
   const [officials, setOfficials] = useState([]);
   const [form, setForm] = useState(emptyForm);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [preview, setPreview] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -35,7 +37,6 @@ export default function ManageOfficials() {
 
   async function fetchOfficials() {
     setLoading(true);
-    setError("");
 
     const { data, error } = await supabase
       .from("officials")
@@ -60,47 +61,96 @@ export default function ManageOfficials() {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
+  function handleImageChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image must be smaller than 5 MB.");
+      return;
+    }
+
+    setSelectedImage(file);
+    setPreview(URL.createObjectURL(file));
+    setError("");
+  }
+
   function resetForm() {
     setForm(emptyForm);
+    setSelectedImage(null);
+    setPreview("");
     setEditingId(null);
     setMessage("");
+  }
+
+  async function uploadImage() {
+    if (!selectedImage) return form.image_url;
+
+    const fileExt = selectedImage.name.split(".").pop();
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
+    const filePath = fileName;
+
+    const { error: uploadError } = await supabase.storage
+      .from("officials-images")
+      .upload(filePath, selectedImage, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from("officials-images")
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
-    setMessage("");
     setError("");
+    setMessage("");
 
-    const record = {
-      name: form.name.trim(),
-      position: form.position.trim(),
-      organizational_unit: form.organizational_unit.trim(),
-      group_name: form.group_name,
-      biography: form.biography.trim(),
-      image_url: form.image_url.trim(),
-    };
+    try {
+      const imageUrl = await uploadImage();
 
-    const result = editingId
-      ? await supabase
-          .from("officials")
-          .update(record)
-          .eq("id", editingId)
-      : await supabase.from("officials").insert([record]);
+      const record = {
+        name: form.name.trim(),
+        position: form.position.trim(),
+        organizational_unit: form.organizational_unit.trim(),
+        group_name: form.group_name,
+        biography: form.biography.trim(),
+        image_url: imageUrl,
+      };
 
-    if (result.error) {
-      setError(result.error.message);
-    } else {
+      const result = editingId
+        ? await supabase
+            .from("officials")
+            .update(record)
+            .eq("id", editingId)
+        : await supabase.from("officials").insert([record]);
+
+      if (result.error) throw result.error;
+
       setMessage(
         editingId
           ? "Official updated successfully."
           : "Official added successfully."
       );
+
       resetForm();
       await fetchOfficials();
+    } catch (err) {
+      setError(err.message || "Unable to save official.");
+    } finally {
+      setSaving(false);
     }
-
-    setSaving(false);
   }
 
   function handleEdit(official) {
@@ -113,6 +163,8 @@ export default function ManageOfficials() {
       image_url: official.image_url || "",
     });
 
+    setSelectedImage(null);
+    setPreview(official.image_url || "");
     setEditingId(official.id);
     setMessage("");
     setError("");
@@ -120,26 +172,26 @@ export default function ManageOfficials() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  async function handleDelete(id) {
-    if (!window.confirm("Are you sure you want to delete this official?")) {
-      return;
-    }
+  async function handleDelete(official) {
+    if (!window.confirm(`Delete ${official.name}?`)) return;
+
+    setError("");
+    setMessage("");
 
     const { error } = await supabase
       .from("officials")
       .delete()
-      .eq("id", id);
+      .eq("id", official.id);
 
     if (error) {
       setError(error.message);
-    } else {
-      setMessage("Official deleted successfully.");
-      await fetchOfficials();
-
-      if (editingId === id) {
-        resetForm();
-      }
+      return;
     }
+
+    setMessage("Official deleted successfully.");
+    await fetchOfficials();
+
+    if (editingId === official.id) resetForm();
   }
 
   return (
@@ -217,21 +269,23 @@ export default function ManageOfficials() {
           </label>
 
           <label>
-            Profile Image URL
+            Profile Image
             <input
-              name="image_url"
-              value={form.image_url}
-              onChange={handleChange}
-              placeholder="Paste image URL"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
             />
           </label>
 
-          {form.image_url && (
-            <img
-              src={form.image_url}
-              alt="Profile preview"
-              className="official-preview"
-            />
+          {preview && (
+            <div>
+              <p>Image Preview</p>
+              <img
+                src={preview}
+                alt="Official profile preview"
+                className="official-preview"
+              />
+            </div>
           )}
 
           <div className="form-actions">
@@ -266,11 +320,17 @@ export default function ManageOfficials() {
           officials.map((official) => (
             <article className="official-admin-card" key={official.id}>
               <div>
+                {official.image_url && (
+                  <img
+                    src={official.image_url}
+                    alt={official.name}
+                    className="official-preview"
+                  />
+                )}
+
                 <h3>{official.name}</h3>
                 <p>{official.position}</p>
-                <small>
-                  {official.group_name || "No category assigned"}
-                </small>
+                <small>{official.group_name}</small>
               </div>
 
               <div className="form-actions">
@@ -280,7 +340,7 @@ export default function ManageOfficials() {
 
                 <button
                   className="delete-button"
-                  onClick={() => handleDelete(official.id)}
+                  onClick={() => handleDelete(official)}
                 >
                   Delete
                 </button>

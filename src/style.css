@@ -916,3 +916,27 @@ footer p {
     height: 180px;
   }
 }
+.official-preview {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.official-admin-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 18px;
+  margin-bottom: 12px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+}
+
+.official-admin-card .official-preview {
+  width: 75px;
+  height: 75px;
+}
