@@ -15,12 +15,11 @@ export default function Mayor() {
           <p className="profile-position">Municipal Vice Mayor</p>
           <h2>Biography</h2>
           <p>
-            He oversees local government programs and community activities in
-            Mabini, including an educational assistance program (AY 2026–2027
-            1st Semester), financial assistance to farmers, local sports events
-            (such as an inter-barangay basketball tournament and pickleball),
-            Undas public cemetery cleanups, and calamity/weather-related
-            suspensions and response updates.
+            Affectionately known throughout his community as "Pastor" Malalis—is
+            a Filipino religious leader and public servant currently serving as
+            the Vice Mayor of Mabini, Pangasinan. Grounded in his personal
+            philosophy that "serving God is serving people," he bridges pastoral
+            ministry and local legislative governance.
           </p>
           <h2>Official Information</h2>
           <div className="profile-details">
