@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 
 const categories = [
@@ -8,20 +9,21 @@ const categories = [
   "Public Documents",
 ];
 
+const emptyForm = {
+  category: categories[0],
+  title: "",
+  description: "",
+};
+
 export default function ManageProcurement() {
   const [records, setRecords] = useState([]);
+  const [form, setForm] = useState(emptyForm);
+  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [editingId, setEditingId] = useState(null);
-
-  const [form, setForm] = useState({
-    category: categories[0],
-    title: "",
-    description: "",
-  });
-
-  const [document, setDocument] = useState(null);
+  const [message, setMessage] = useState("");
 
   async function fetchRecords() {
     setLoading(true);
@@ -46,59 +48,109 @@ export default function ManageProcurement() {
   }, []);
 
   function handleChange(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   }
 
   function resetForm() {
-    setForm({
-      category: categories[0],
-      title: "",
-      description: "",
-    });
-    setDocument(null);
+    setForm(emptyForm);
+    setSelectedDocument(null);
     setEditingId(null);
 
-    const fileInput = document.getElementById("procurement-file");
+    const fileInput = window.document.getElementById(
+      "procurement-file"
+    );
+
     if (fileInput) fileInput.value = "";
+  }
+
+  function handleDocumentChange(e) {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      setSelectedDocument(null);
+      return;
+    }
+
+    const isPdf =
+      file.type === "application/pdf" ||
+      file.name.toLowerCase().endsWith(".pdf");
+
+    if (!isPdf) {
+      setError("Please select a PDF file only.");
+      e.target.value = "";
+      setSelectedDocument(null);
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setError("The PDF file must not exceed 10 MB.");
+      e.target.value = "";
+      setSelectedDocument(null);
+      return;
+    }
+
+    setError("");
+    setSelectedDocument(file);
+  }
+
+  function handleEdit(item) {
+    setEditingId(item.id);
+
+    setForm({
+      category: item.category || categories[0],
+      title: item.title || "",
+      description: item.description || "",
+    });
+
+    setSelectedDocument(null);
+    setError("");
+    setMessage("");
+
+    const fileInput = window.document.getElementById(
+      "procurement-file"
+    );
+
+    if (fileInput) fileInput.value = "";
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError("");
+
     setSaving(true);
+    setError("");
+    setMessage("");
 
     try {
       let documentUrl = null;
 
       if (editingId) {
-        const existing = records.find((item) => item.id === editingId);
+        const existing = records.find(
+          (item) => item.id === editingId
+        );
+
         documentUrl = existing?.document_url || null;
       }
 
-      if (document) {
-        const isPdf =
-          document.type === "application/pdf" ||
-          document.name.toLowerCase().endsWith(".pdf");
-
-        if (!isPdf) {
-          throw new Error("Please upload a PDF file only.");
-        }
-
-        if (document.size > 10 * 1024 * 1024) {
-          throw new Error("The PDF file must not exceed 10 MB.");
-        }
-
-        const filePath = `${crypto.randomUUID()}-${document.name.replace(
+      // Upload PDF if a new document was selected
+      if (selectedDocument) {
+        const filePath = `${crypto.randomUUID()}-${selectedDocument.name.replace(
           /[^a-zA-Z0-9._-]/g,
           "_"
         )}`;
 
         const { error: uploadError } = await supabase.storage
           .from("procurement-documents")
-          .upload(filePath, document, {
+          .upload(filePath, selectedDocument, {
             contentType: "application/pdf",
             upsert: false,
           });
@@ -134,68 +186,93 @@ export default function ManageProcurement() {
 
       if (result.error) throw result.error;
 
+      const wasEditing = editingId !== null;
+
       resetForm();
       await fetchRecords();
-      alert(editingId ? "Record updated successfully!" : "Record added successfully!");
+
+      setMessage(
+        wasEditing
+          ? "Procurement record updated successfully!"
+          : "Procurement record added successfully!"
+      );
     } catch (err) {
-      setError(err.message || "Unable to save procurement record.");
+      setError(
+        err.message || "Unable to save procurement record."
+      );
     } finally {
       setSaving(false);
     }
   }
 
-  function handleEdit(item) {
-    setEditingId(item.id);
-    setForm({
-      category: item.category || categories[0],
-      title: item.title || "",
-      description: item.description || "",
-    });
-    setDocument(null);
+  async function handleDelete(item) {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${item.title}"?`
+    );
 
-    const fileInput = document.getElementById("procurement-file");
-    if (fileInput) fileInput.value = "";
+    if (!confirmed) return;
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  async function handleDelete(id) {
-    if (!window.confirm("Are you sure you want to delete this record?")) {
-      return;
-    }
+    setError("");
+    setMessage("");
 
     const { error } = await supabase
       .from("procurement")
       .delete()
-      .eq("id", id);
+      .eq("id", item.id);
 
     if (error) {
       setError(error.message);
       return;
     }
 
+    if (editingId === item.id) {
+      resetForm();
+    }
+
+    setMessage("Procurement record deleted successfully!");
+
     await fetchRecords();
   }
 
   return (
-    <div className="admin-dashboard">
+    <main className="admin-dashboard">
+
+      {/* HEADER */}
       <header className="admin-header">
         <div>
           <p className="eyebrow">CONTENT MANAGEMENT</p>
           <h1>Manage Procurement & Awards</h1>
-          <p>Add and manage public procurement documents.</p>
+          <p>
+            Add, edit, and manage public procurement documents.
+          </p>
         </div>
-        <a href="/admin/dashboard" className="admin-back-button">
+
+        <Link
+          to="/admin/dashboard"
+          className="admin-back-button"
+        >
           Back to Dashboard
-        </a>
+        </Link>
       </header>
 
+      {/* ADD / EDIT FORM */}
       <section className="admin-form-card">
-        <h2>{editingId ? "Edit Record" : "Add Procurement Record"}</h2>
+        <h2>
+          {editingId
+            ? "Edit Procurement Record"
+            : "Add Procurement Record"}
+        </h2>
 
-        {error && <p className="admin-error">{error}</p>}
+        {error && (
+          <p className="admin-error">{error}</p>
+        )}
+
+        {message && (
+          <p className="manage-message">{message}</p>
+        )}
 
         <form onSubmit={handleSubmit}>
+
           <label>Category</label>
           <select
             name="category"
@@ -234,13 +311,24 @@ export default function ManageProcurement() {
             id="procurement-file"
             type="file"
             accept=".pdf,application/pdf"
-            onChange={(e) => setDocument(e.target.files?.[0] || null)}
+            onChange={handleDocumentChange}
           />
 
           <p className="admin-file-note">
             PDF only. Maximum file size: 10 MB.
-            {editingId && " Leave this empty to keep the existing document."}
           </p>
+
+          {selectedDocument && (
+            <p>
+              Selected file: {selectedDocument.name}
+            </p>
+          )}
+
+          {editingId && (
+            <p className="admin-file-note">
+              Leave the file field empty to keep the existing PDF.
+            </p>
+          )}
 
           <div className="admin-form-actions">
             <button type="submit" disabled={saving}>
@@ -264,22 +352,31 @@ export default function ManageProcurement() {
         </form>
       </section>
 
+      {/* EXISTING RECORDS */}
       <section className="admin-records">
         <h2>Existing Procurement Records</h2>
 
         {loading ? (
-          <p>Loading records...</p>
+          <p>Loading procurement records...</p>
         ) : records.length === 0 ? (
           <p>No procurement records available yet.</p>
         ) : (
           records.map((item) => (
-            <article className="procurement-admin-card" key={item.id}>
+            <article
+              className="procurement-admin-card"
+              key={item.id}
+            >
               <div>
                 <span className="procurement-category">
                   {item.category}
                 </span>
+
                 <h3>{item.title}</h3>
-                <p>{item.description || "No description provided."}</p>
+
+                <p>
+                  {item.description ||
+                    "No description provided."}
+                </p>
 
                 {item.document_url && (
                   <a
@@ -293,12 +390,17 @@ export default function ManageProcurement() {
               </div>
 
               <div className="procurement-admin-actions">
-                <button onClick={() => handleEdit(item)}>
+                <button
+                  type="button"
+                  onClick={() => handleEdit(item)}
+                >
                   Edit
                 </button>
+
                 <button
+                  type="button"
                   className="admin-delete-button"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => handleDelete(item)}
                 >
                   Delete
                 </button>
@@ -307,6 +409,7 @@ export default function ManageProcurement() {
           ))
         )}
       </section>
-    </div>
+
+    </main>
   );
 }
