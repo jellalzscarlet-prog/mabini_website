@@ -1,6 +1,3 @@
-import SupabaseTest from "./pages/SupabaseTest.jsx";
-
-<Route path="/supabase-test" element={<SupabaseTest />} />;
 import { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
