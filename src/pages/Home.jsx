@@ -26,6 +26,11 @@ const places = [
     "A network of caves in the municipality.",
     "cacupangan cave.jpg",
   ],
+  [
+    "Sto. Rosario Cave",
+    "A beautiful cave in the municipality.",
+    "storosario.jpg",
+  ],
 ];
 
 const services = [
