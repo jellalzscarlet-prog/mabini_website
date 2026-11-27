@@ -15,8 +15,12 @@ export default function Mayor() {
           <p className="profile-position">Municipal Mayor</p>
           <h2>Biography</h2>
           <p>
-            Add the official biography and background of the Municipal Mayor
-            here.
+            He oversees local government programs and community activities in
+            Mabini, including an educational assistance program (AY 2026–2027
+            1st Semester), financial assistance to farmers, local sports events
+            (such as an inter-barangay basketball tournament and pickleball),
+            Undas public cemetery cleanups, and calamity/weather-related
+            suspensions and response updates.
           </p>
           <h2>Official Information</h2>
           <div className="profile-details">

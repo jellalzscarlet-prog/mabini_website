@@ -7,6 +7,7 @@ import Mayor from "./pages/Mayor.jsx";
 import Officials from "./pages/Officials.jsx";
 import Members from "./pages/Members.jsx";
 import Procurement from "./pages/Procurement.jsx";
+import ViceMayor from "./pages/ViceMayor.jsx";
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/members" element={<Members />} />
           <Route path="/procurement" element={<Procurement />} />
           <Route path="*" element={<Home />} />
+          <Route path="/vice-mayor" element={<ViceMayor />} />
         </Routes>
 
         <Footer />
