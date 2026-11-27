@@ -52,20 +52,22 @@ export default function Officials() {
         </p>
       </div>
 
-      <div className="cards">
+      <div className="cards officials-grid">
         {groups.map(([title, img, to]) => (
           <Link
             to={to}
-            className="card member-card"
+            className="card member-card officials-card"
             key={title}
           >
-            <img
-              className={
-                title.includes("Mayor") ? "" : "logo"
-              }
-              src={`/images/${img}`}
-              alt={title}
-            />
+            <div className="officials-image-wrapper">
+              <img
+                className={
+                  title.includes("Mayor") ? "" : "logo"
+                }
+                src={`/images/${img}`}
+                alt={title}
+              />
+            </div>
 
             <div className="card-body">
               <h3>{title}</h3>
