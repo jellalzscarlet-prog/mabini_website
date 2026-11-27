@@ -24,7 +24,7 @@ const places = [
   [
     "Cacupangan Cave System",
     "A network of caves in the municipality.",
-    "cacupangan cave.jpg",
+    "cacupangan.jpg",
   ],
   [
     "Sto. Rosario Cave",
