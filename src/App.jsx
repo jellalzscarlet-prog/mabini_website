@@ -53,11 +53,7 @@ export default function App() {
           <Route path="/members" element={<Members />} />
           <Route path="/procurement" element={<Procurement />} />
           <Route path="/admin" element={<AdminLogin />} />
-
-          <Route
-            path="/admin/dashboard"
-            element={
-              <AdminGuard>
+          <Route path="/admin/dashboard"element={<AdminGuard>
                 <AdminDashboard />
               </AdminGuard>
             }
