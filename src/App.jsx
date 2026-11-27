@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
@@ -15,7 +14,9 @@ import Procurement from "./pages/Procurement.jsx";
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminGuard from "./pages/admin/AdminGuard.jsx";
+
 import ManageNews from "./pages/admin/ManageNews.jsx";
+import ManageOfficials from "./pages/admin/ManageOfficials.jsx";
 
 function ComingSoon({ title }) {
   return (
@@ -55,10 +56,7 @@ export default function App() {
   return (
     <>
       {!isAdminRoute && (
-        <Sidebar
-          open={sidebarOpen}
-          onOpenChange={setSidebarOpen}
-        />
+        <Sidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
       )}
 
       <div
@@ -104,7 +102,7 @@ export default function App() {
             path="/admin/officials"
             element={
               <AdminGuard>
-                <ComingSoon title="Manage Municipal Officials" />
+                <ManageOfficials />
               </AdminGuard>
             }
           />
