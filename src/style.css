@@ -1137,3 +1137,11 @@ footer p {
     height: 200px;
   }
 }
+
+
+/* Center Back to Officials button */
+.profile-page > .back-button {
+  display: table;
+  margin: 0 auto 24px;
+  text-align: center;
+}

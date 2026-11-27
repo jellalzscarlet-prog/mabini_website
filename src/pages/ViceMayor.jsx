@@ -32,7 +32,7 @@ export default function ViceMayor() {
   return (
     <main className="profile-page">
       <Link className="back-button" to="/officials">
-        ← Back to Municipal Officials
+        ← Back to Officials
       </Link>
 
       {loading ? (
@@ -73,7 +73,8 @@ export default function ViceMayor() {
                 <strong>Municipality:</strong> Mabini, Pangasinan
               </p>
               <p>
-                <strong>Office:</strong> {viceMayor.organizational_unit || "Office of the Vice Mayor"}
+                <strong>Office:</strong>{" "}
+                {viceMayor.organizational_unit || "Office of the Vice Mayor"}
               </p>
             </div>
           </div>

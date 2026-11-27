@@ -32,7 +32,7 @@ export default function Mayor() {
   return (
     <main className="profile-page">
       <Link className="back-button" to="/officials">
-        ← Back to Municipal Officials
+        ← Back to Officials
       </Link>
 
       {loading ? (
@@ -73,7 +73,8 @@ export default function Mayor() {
                 <strong>Municipality:</strong> Mabini, Pangasinan
               </p>
               <p>
-                <strong>Office:</strong> {mayor.organizational_unit || "Office of the Mayor"}
+                <strong>Office:</strong>{" "}
+                {mayor.organizational_unit || "Office of the Mayor"}
               </p>
             </div>
           </div>
