@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
@@ -14,9 +15,23 @@ import Procurement from "./pages/Procurement.jsx";
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminGuard from "./pages/admin/AdminGuard.jsx";
+import ManageNews from "./pages/admin/ManageNews.jsx";
+
+function ComingSoon({ title }) {
+  return (
+    <main className="admin-dashboard">
+      <h1>{title}</h1>
+      <p>This management page is not yet available.</p>
+      <a href="/admin/dashboard">Back to Dashboard</a>
+    </main>
+  );
+}
+
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   useEffect(() => {
     if (location.pathname === "/" && location.hash) {
@@ -39,19 +54,66 @@ export default function App() {
 
   return (
     <>
-      <Sidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
+      {!isAdminRoute && (
+        <Sidebar
+          open={sidebarOpen}
+          onOpenChange={setSidebarOpen}
+        />
+      )}
 
-      <div className={`page-content ${sidebarOpen ? "sidebar-open" : ""}`}>
+      <div
+        className={
+          !isAdminRoute && sidebarOpen
+            ? "page-content sidebar-open"
+            : "page-content"
+        }
+      >
         <Routes>
+          {/* Public Website */}
           <Route path="/" element={<Home />} />
           <Route path="/mayor" element={<Mayor />} />
           <Route path="/vice-mayor" element={<ViceMayor />} />
           <Route path="/officials" element={<Officials />} />
           <Route path="/members" element={<Members />} />
           <Route path="/procurement" element={<Procurement />} />
+
+          {/* CMS Login */}
           <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard"element={<AdminGuard>
+
+          {/* CMS Dashboard */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminGuard>
                 <AdminDashboard />
+              </AdminGuard>
+            }
+          />
+
+          {/* CMS Management Pages */}
+          <Route
+            path="/admin/news"
+            element={
+              <AdminGuard>
+                <ManageNews />
+              </AdminGuard>
+            }
+          />
+
+          <Route
+            path="/admin/officials"
+            element={
+              <AdminGuard>
+                <ComingSoon title="Manage Municipal Officials" />
+              </AdminGuard>
+            }
+          />
+
+          <Route
+            path="/admin/procurement"
+            element={
+              <AdminGuard>
+                <ComingSoon title="Manage Procurement & Awards" />
               </AdminGuard>
             }
           />
@@ -59,7 +121,7 @@ export default function App() {
           <Route path="*" element={<Home />} />
         </Routes>
 
-        <Footer />
+        {!isAdminRoute && <Footer />}
       </div>
     </>
   );
