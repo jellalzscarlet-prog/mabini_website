@@ -17,6 +17,7 @@ import AdminGuard from "./pages/admin/AdminGuard.jsx";
 
 import ManageNews from "./pages/admin/ManageNews.jsx";
 import ManageOfficials from "./pages/admin/ManageOfficials.jsx";
+import ManageProcurement from "./pages/admin/ManageProcurement.jsx";
 
 function ComingSoon({ title }) {
   return (
@@ -111,7 +112,7 @@ export default function App() {
             path="/admin/procurement"
             element={
               <AdminGuard>
-                <ComingSoon title="Manage Procurement & Awards" />
+                <ManageProcurement />
               </AdminGuard>
             }
           />

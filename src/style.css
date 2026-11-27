@@ -940,3 +940,98 @@ footer p {
   width: 75px;
   height: 75px;
 }
+
+
+.admin-form-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  margin: 25px 0;
+  border: 1px solid #e5e5e5;
+}
+
+.admin-form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-form-card input,
+.admin-form-card select,
+.admin-form-card textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  font: inherit;
+}
+
+.admin-form-card label {
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.admin-form-actions,
+.procurement-admin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.admin-form-actions button,
+.procurement-admin-actions button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.admin-form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-cancel-button {
+  background: #ddd;
+  color: #222;
+}
+
+.admin-delete-button {
+  background: #b42318;
+  color: white;
+}
+
+.admin-file-note {
+  color: #777;
+  font-size: 13px;
+}
+
+.procurement-admin-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  margin-bottom: 12px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+}
+
+.procurement-admin-card h3 {
+  margin: 8px 0;
+}
+
+.procurement-category {
+  font-size: 12px;
+  color: #28734d;
+  font-weight: 700;
+}
+
+@media (max-width: 650px) {
+  .procurement-admin-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
