@@ -25,6 +25,8 @@ export default function ManageNews() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   useEffect(() => {
     fetchNews();
   }, []);
@@ -45,6 +47,10 @@ export default function ManageNews() {
 
     setLoading(false);
   }
+
+  const filteredNews = news.filter((item) =>
+    (item.title || "").toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   function resetForm() {
     setTitle("");
@@ -218,7 +224,6 @@ export default function ManageNews() {
         newsId = data.id;
       }
 
-      // Save additional local photos
       const galleryRecords = [];
 
       for (const file of galleryFiles) {
@@ -231,7 +236,6 @@ export default function ManageNews() {
         });
       }
 
-      // Save additional URL photos
       for (const url of galleryUrls) {
         galleryRecords.push({
           news_id: newsId,
@@ -323,9 +327,43 @@ export default function ManageNews() {
       await supabase.storage.from(BUCKET).remove(paths);
     }
 
+    if (editingId === id) resetForm();
+
     setMessage("News deleted successfully!");
     await fetchNews();
   }
+
+  async function getGalleryCount(newsId) {
+    const { count, error } = await supabase
+      .from("news_images")
+      .select("*", { count: "exact", head: true })
+      .eq("news_id", newsId);
+
+    if (error) return 0;
+    return count || 0;
+  }
+
+  const [galleryCounts, setGalleryCounts] = useState({});
+
+  useEffect(() => {
+    async function fetchGalleryCounts() {
+      if (news.length === 0) {
+        setGalleryCounts({});
+        return;
+      }
+
+      const results = await Promise.all(
+        news.map(async (item) => {
+          const count = await getGalleryCount(item.id);
+          return [item.id, count];
+        })
+      );
+
+      setGalleryCounts(Object.fromEntries(results));
+    }
+
+    fetchGalleryCounts();
+  }, [news]);
 
   return (
     <main className="manage-page">
@@ -540,8 +578,8 @@ export default function ManageNews() {
               {saving
                 ? "Saving..."
                 : editingId !== null
-                ? "Update News"
-                : "Add News"}
+                  ? "Update News"
+                  : "Add News"}
             </button>
 
             {editingId !== null && (
@@ -559,40 +597,105 @@ export default function ManageNews() {
         {message && <p className="manage-message">{message}</p>}
       </section>
 
-      <section className="news-list-section">
-        <h2>Existing News & Events</h2>
+      <section className="officials-admin-list">
+        <div className="officials-table-header">
+          <div>
+            <h2>Existing News & Events</h2>
+            <p>
+              Showing {filteredNews.length} of {news.length} news items
+            </p>
+          </div>
+        </div>
+
+        <div className="officials-table-filters">
+          <input
+            type="text"
+            placeholder="Search news or event title..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
 
         {loading ? (
           <p>Loading news...</p>
-        ) : news.length === 0 ? (
-          <p>No news items found. Add your first news item above.</p>
+        ) : filteredNews.length === 0 ? (
+          <p className="officials-empty">
+            No news items found.
+          </p>
         ) : (
-          <div className="news-admin-list">
-            {news.map((item) => (
-              <article className="news-admin-card" key={item.id}>
-                {item.image_url && (
-                  <img src={item.image_url} alt={item.title} />
-                )}
+          <div className="officials-table-wrapper">
+            <table className="officials-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cover Photo</th>
+                  <th>News / Event Title</th>
+                  <th>Description</th>
+                  <th>Date Published</th>
+                  <th>Gallery Photos</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
-                <div className="news-admin-info">
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
+              <tbody>
+                {filteredNews.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.id}</td>
 
-                  <div className="form-actions">
-                    <button onClick={() => editNews(item)}>
-                      Edit
-                    </button>
+                    <td>
+                      {item.image_url ? (
+                        <img
+                          src={item.image_url}
+                          alt={item.title}
+                          className="official-table-image"
+                        />
+                      ) : (
+                        <span className="no-official-image">No Image</span>
+                      )}
+                    </td>
 
-                    <button
-                      className="delete-button"
-                      onClick={() => deleteNews(item.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))}
+                    <td className="official-table-name">
+                      {item.title}
+                    </td>
+
+                    <td className="news-table-description">
+                      {item.description
+                        ? `${item.description.slice(0, 100)}${
+                            item.description.length > 100 ? "..." : ""
+                          }`
+                        : "No description"}
+                    </td>
+
+                    <td>
+                      {item.created_at
+                        ? new Date(item.created_at).toLocaleDateString()
+                        : "—"}
+                    </td>
+
+                    <td>{galleryCounts[item.id] ?? "..."}</td>
+
+                    <td>
+                      <div className="official-table-actions">
+                        <button
+                          type="button"
+                          onClick={() => editNews(item)}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="delete-button"
+                          onClick={() => deleteNews(item.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>

@@ -17,6 +17,9 @@ export default function ManageProcurement() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
+
   useEffect(() => {
     fetchRecords();
   }, []);
@@ -38,6 +41,19 @@ export default function ManageProcurement() {
 
     setLoading(false);
   }
+
+  const filteredRecords = records.filter((record) => {
+    const search = searchTerm.toLowerCase();
+
+    const matchesSearch =
+      (record.title || "").toLowerCase().includes(search) ||
+      (record.category || "").toLowerCase().includes(search);
+
+    const matchesCategory =
+      filterCategory === "" || record.category === filterCategory;
+
+    return matchesSearch && matchesCategory;
+  });
 
   function resetForm() {
     setTitle("");
@@ -277,50 +293,97 @@ export default function ManageProcurement() {
         </form>
       </section>
 
-      <section className="news-list-section">
-        <h2>Existing Procurement Records</h2>
+      <section className="officials-admin-list">
+        <div className="officials-table-header">
+          <div>
+            <h2>Existing Procurement Records</h2>
+            <p>
+              Showing {filteredRecords.length} of {records.length} records
+            </p>
+          </div>
+        </div>
+
+        <div className="officials-table-filters">
+          <input
+            type="text"
+            placeholder="Search project name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+          >
+            <option value="">All Categories</option>
+            {categories.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {loading ? (
           <p>Loading records...</p>
-        ) : records.length === 0 ? (
-          <p>No procurement records available.</p>
+        ) : filteredRecords.length === 0 ? (
+          <p className="officials-empty">No procurement records found.</p>
         ) : (
-          <div className="news-admin-list">
-            {records.map((record) => (
-              <article className="news-admin-card" key={record.id}>
-                <div className="news-admin-info">
-                  <h3>{record.title}</h3>
-                  <p>Category: {record.category}</p>
-                  <p>
-                    Project/Bidding Date:{" "}
-                    {record.project_date || "No date selected"}
-                  </p>
+          <div className="officials-table-wrapper">
+            <table className="officials-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name of Project</th>
+                  <th>Category</th>
+                  <th>Project / Bidding Date</th>
+                  <th>PDF Document</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
-                  {record.document_url && (
-                    <a
-                      href={record.document_url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      View PDF
-                    </a>
-                  )}
+              <tbody>
+                {filteredRecords.map((record) => (
+                  <tr key={record.id}>
+                    <td>{record.id}</td>
+                    <td className="official-table-name">{record.title}</td>
+                    <td>{record.category || "—"}</td>
+                    <td>{record.project_date || "—"}</td>
+                    <td>
+                      {record.document_url ? (
+                        <a
+                          href={record.document_url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          View PDF
+                        </a>
+                      ) : (
+                        "No document"
+                      )}
+                    </td>
+                    <td>
+                      <div className="official-table-actions">
+                        <button
+                          type="button"
+                          onClick={() => editRecord(record)}
+                        >
+                          Edit
+                        </button>
 
-                  <div className="form-actions">
-                    <button onClick={() => editRecord(record)}>
-                      Edit
-                    </button>
-
-                    <button
-                      className="delete-button"
-                      onClick={() => deleteRecord(record.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))}
+                        <button
+                          type="button"
+                          className="delete-button"
+                          onClick={() => deleteRecord(record.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>

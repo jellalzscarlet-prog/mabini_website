@@ -32,8 +32,12 @@ export default function ManageOfficials() {
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [movingId, setMovingId] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterGroup, setFilterGroup] = useState("");
 
   async function fetchOfficials() {
     setLoading(true);
@@ -41,12 +45,27 @@ export default function ManageOfficials() {
     const { data, error } = await supabase
       .from("officials")
       .select("*")
+      .order("sort_order", { ascending: true })
       .order("id", { ascending: true });
 
     if (error) {
       setError(error.message);
     } else {
-      setOfficials(data || []);
+      const sortedData = [...(data || [])].sort((a, b) => {
+        const groupA = groups.indexOf(a.group_name);
+        const groupB = groups.indexOf(b.group_name);
+
+        if (groupA !== groupB) {
+          return (groupA === -1 ? groups.length : groupA) -
+            (groupB === -1 ? groups.length : groupB);
+        }
+
+        return (
+          (a.sort_order ?? a.id) - (b.sort_order ?? b.id)
+        );
+      });
+
+      setOfficials(sortedData);
     }
 
     setLoading(false);
@@ -55,6 +74,20 @@ export default function ManageOfficials() {
   useEffect(() => {
     fetchOfficials();
   }, []);
+
+  const filteredOfficials = officials.filter((official) => {
+    const search = searchTerm.toLowerCase();
+
+    const matchesSearch =
+      (official.name || "").toLowerCase().includes(search) ||
+      (official.position || "").toLowerCase().includes(search) ||
+      (official.organizational_unit || "").toLowerCase().includes(search);
+
+    const matchesGroup =
+      filterGroup === "" || official.group_name === filterGroup;
+
+    return matchesSearch && matchesGroup;
+  });
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -129,12 +162,31 @@ export default function ManageOfficials() {
         image_url: imageUrl,
       };
 
-      const result = editingId
-        ? await supabase
-            .from("officials")
-            .update(record)
-            .eq("id", editingId)
-        : await supabase.from("officials").insert([record]);
+      let result;
+
+      if (editingId) {
+        result = await supabase
+          .from("officials")
+          .update(record)
+          .eq("id", editingId);
+      } else {
+        const groupOfficials = officials.filter(
+          (official) => official.group_name === form.group_name
+        );
+
+        const nextOrder =
+          groupOfficials.length > 0
+            ? Math.max(
+                ...groupOfficials.map(
+                  (official) => official.sort_order ?? official.id
+                )
+              ) + 1
+            : 1;
+
+        result = await supabase
+          .from("officials")
+          .insert([{ ...record, sort_order: nextOrder }]);
+      }
 
       if (result.error) throw result.error;
 
@@ -192,6 +244,93 @@ export default function ManageOfficials() {
     await fetchOfficials();
 
     if (editingId === official.id) resetForm();
+  }
+
+  async function moveOfficial(official, direction) {
+    if (movingId !== null) return;
+
+    setError("");
+    setMessage("");
+
+    // Get all officials in the same category.
+    const groupOfficials = officials
+      .filter((item) => item.group_name === official.group_name)
+      .sort((a, b) => {
+        return (
+          (a.sort_order ?? a.id) - (b.sort_order ?? b.id)
+        );
+      });
+
+    const currentIndex = groupOfficials.findIndex(
+      (item) => item.id === official.id
+    );
+
+    const targetIndex = currentIndex + direction;
+
+    // Prevent moving beyond the first or last position.
+    if (targetIndex < 0 || targetIndex >= groupOfficials.length) {
+      return;
+    }
+
+    const currentOfficial = groupOfficials[currentIndex];
+    const targetOfficial = groupOfficials[targetIndex];
+
+    const currentOrder = currentOfficial.sort_order ?? currentOfficial.id;
+    const targetOrder = targetOfficial.sort_order ?? targetOfficial.id;
+
+    setMovingId(official.id);
+
+    try {
+      // Swap the two officials' sort order values.
+      const { error: firstError } = await supabase
+        .from("officials")
+        .update({ sort_order: targetOrder })
+        .eq("id", currentOfficial.id);
+
+      if (firstError) throw firstError;
+
+      const { error: secondError } = await supabase
+        .from("officials")
+        .update({ sort_order: currentOrder })
+        .eq("id", targetOfficial.id);
+
+      if (secondError) {
+        // Attempt to restore the first official's original position.
+        await supabase
+          .from("officials")
+          .update({ sort_order: currentOrder })
+          .eq("id", currentOfficial.id);
+
+        throw secondError;
+      }
+
+      setMessage(`${official.name} moved successfully.`);
+      await fetchOfficials();
+    } catch (err) {
+      setError(err.message || "Unable to rearrange officials.");
+      await fetchOfficials();
+    } finally {
+      setMovingId(null);
+    }
+  }
+
+  function getGroupPosition(official) {
+    const groupOfficials = officials
+      .filter((item) => item.group_name === official.group_name)
+      .sort((a, b) => {
+        return (
+          (a.sort_order ?? a.id) - (b.sort_order ?? b.id)
+        );
+      });
+
+    const index = groupOfficials.findIndex(
+      (item) => item.id === official.id
+    );
+
+    return {
+      isFirst: index === 0,
+      isLast: index === groupOfficials.length - 1,
+    };
   }
 
   return (
@@ -313,43 +452,136 @@ export default function ManageOfficials() {
       </section>
 
       <section className="officials-admin-list">
-        <h2>Existing Officials ({officials.length})</h2>
+        <div className="officials-table-header">
+          <div>
+            <h2>Existing Officials</h2>
+            <p>
+              Showing {filteredOfficials.length} of {officials.length} officials
+            </p>
+            <p className="officials-reorder-note">
+              Use the ↑ and ↓ buttons to arrange officials within their category.
+            </p>
+          </div>
+        </div>
+
+        <div className="officials-table-filters">
+          <input
+            type="text"
+            placeholder="Search name, position, or organizational unit..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <select
+            value={filterGroup}
+            onChange={(e) => setFilterGroup(e.target.value)}
+          >
+            <option value="">All Categories</option>
+            {groups.map((group) => (
+              <option key={group} value={group}>
+                {group}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {loading ? (
           <p>Loading officials...</p>
-        ) : officials.length === 0 ? (
-          <p>No official records found.</p>
+        ) : filteredOfficials.length === 0 ? (
+          <p className="officials-empty">
+            No official records found.
+          </p>
         ) : (
-          officials.map((official) => (
-            <article className="official-admin-card" key={official.id}>
-              <div>
-                {official.image_url && (
-                  <img
-                    src={official.image_url}
-                    alt={official.name}
-                    className="official-preview"
-                  />
-                )}
+          <div className="officials-table-wrapper">
+            <table className="officials-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Photo</th>
+                  <th>Official Name</th>
+                  <th>Position</th>
+                  <th>Category</th>
+                  <th>Organizational Unit</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
-                <h3>{official.name}</h3>
-                <p>{official.position}</p>
-                <small>{official.group_name}</small>
-              </div>
+              <tbody>
+                {filteredOfficials.map((official) => {
+                  const { isFirst, isLast } = getGroupPosition(official);
 
-              <div className="form-actions">
-                <button onClick={() => handleEdit(official)}>
-                  Edit
-                </button>
+                  return (
+                    <tr key={official.id}>
+                      <td>{official.id}</td>
 
-                <button
-                  className="delete-button"
-                  onClick={() => handleDelete(official)}
-                >
-                  Delete
-                </button>
-              </div>
-            </article>
-          ))
+                      <td>
+                        {official.image_url ? (
+                          <img
+                            src={official.image_url}
+                            alt={official.name}
+                            className="official-table-image"
+                          />
+                        ) : (
+                          <span className="no-official-image">No Image</span>
+                        )}
+                      </td>
+
+                      <td className="official-table-name">
+                        {official.name}
+                      </td>
+
+                      <td>{official.position || "—"}</td>
+
+                      <td>{official.group_name || "—"}</td>
+
+                      <td>{official.organizational_unit || "—"}</td>
+
+                      <td>
+                        <div className="official-table-actions">
+                          <button
+                            type="button"
+                            className="move-up-button"
+                            title="Move up"
+                            aria-label={`Move ${official.name} up`}
+                            disabled={isFirst || movingId !== null}
+                            onClick={() => moveOfficial(official, -1)}
+                          >
+                            ↑
+                          </button>
+
+                          <button
+                            type="button"
+                            className="move-down-button"
+                            title="Move down"
+                            aria-label={`Move ${official.name} down`}
+                            disabled={isLast || movingId !== null}
+                            onClick={() => moveOfficial(official, 1)}
+                          >
+                            ↓
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleEdit(official)}
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            type="button"
+                            className="delete-button"
+                            onClick={() => handleDelete(official)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
     </main>

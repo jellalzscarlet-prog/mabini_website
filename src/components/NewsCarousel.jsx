@@ -8,9 +8,11 @@ export default function NewsCarousel() {
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [transition, setTransition] = useState("enter");
 
   const touchStartX = useRef(0);
   const lastSwipeTime = useRef(0);
+  const transitionTimer = useRef(null);
 
   useEffect(() => {
     async function fetchNews() {
@@ -48,14 +50,34 @@ export default function NewsCarousel() {
 
     return () => {
       supabase.removeChannel(channel);
+
+      if (transitionTimer.current) {
+        clearTimeout(transitionTimer.current);
+      }
     };
   }, []);
+
+  function changeSlide(newIndex) {
+    if (slides.length <= 1 || newIndex === index) return;
+
+    if (transitionTimer.current) {
+      clearTimeout(transitionTimer.current);
+    }
+
+    setTransition("exit");
+
+    transitionTimer.current = setTimeout(() => {
+      setIndex(newIndex);
+      setTransition("enter");
+    }, 250);
+  }
 
   useEffect(() => {
     if (slides.length <= 1) return;
 
     const timer = setInterval(() => {
       setIndex((current) => (current + 1) % slides.length);
+      setTransition("enter");
     }, 6000);
 
     return () => clearInterval(timer);
@@ -64,15 +86,18 @@ export default function NewsCarousel() {
   function previousSlide() {
     if (slides.length <= 1) return;
 
-    setIndex((current) =>
-      current === 0 ? slides.length - 1 : current - 1
-    );
+    const newIndex =
+      index === 0 ? slides.length - 1 : index - 1;
+
+    changeSlide(newIndex);
   }
 
   function nextSlide() {
     if (slides.length <= 1) return;
 
-    setIndex((current) => (current + 1) % slides.length);
+    const newIndex = (index + 1) % slides.length;
+
+    changeSlide(newIndex);
   }
 
   function handleTouchStart(e) {
@@ -85,7 +110,6 @@ export default function NewsCarousel() {
     const touchEndX = e.changedTouches[0].clientX;
     const difference = touchStartX.current - touchEndX;
 
-    // Ignore small movements
     if (Math.abs(difference) < 50) return;
 
     lastSwipeTime.current = Date.now();
@@ -98,7 +122,6 @@ export default function NewsCarousel() {
   }
 
   function preventSwipeClick(e) {
-    // Prevent opening the article when the user swipes
     if (Date.now() - lastSwipeTime.current < 500) {
       e.preventDefault();
     }
@@ -138,7 +161,11 @@ export default function NewsCarousel() {
     >
       <Link
         to={`/news/${currentSlide.id}`}
-        className="news-slide news-slide-link"
+        className={`news-slide news-slide-link ${
+          transition === "exit"
+            ? "carousel-exit"
+            : "carousel-enter"
+        }`}
         key={currentSlide.id}
         onClickCapture={preventSwipeClick}
       >
@@ -180,7 +207,7 @@ export default function NewsCarousel() {
                 className={index === n ? "active" : ""}
                 aria-label={`Go to news article ${n + 1}`}
                 aria-current={index === n ? "true" : undefined}
-                onClick={() => setIndex(n)}
+                onClick={() => changeSlide(n)}
               />
             ))}
           </div>

@@ -1744,3 +1744,250 @@ footer p {
 .carousel-btn {
   display: none !important;
 }
+
+/* ================================
+   EXISTING OFFICIALS - EXCEL TABLE
+================================ */
+
+.officials-admin-list {
+  margin-top: 35px;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+.officials-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.officials-table-header h2 {
+  margin: 0 0 5px;
+}
+
+.officials-table-header p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+}
+
+.officials-table-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.officials-table-filters input,
+.officials-table-filters select {
+  padding: 11px 13px;
+  border: 1px solid #d5ddd7;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.officials-table-filters input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.officials-table-filters select {
+  min-width: 220px;
+}
+
+.officials-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #dce3dd;
+  border-radius: 8px;
+}
+
+.officials-table {
+  width: 100%;
+  min-width: 1000px;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+}
+
+.officials-table th {
+  background: #14583b;
+  color: #fff;
+  padding: 14px 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.officials-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5eae6;
+  vertical-align: middle;
+}
+
+.officials-table tbody tr:nth-child(even) {
+  background: #f8faf8;
+}
+
+.officials-table tbody tr:hover {
+  background: #edf5ef;
+}
+
+.official-table-image {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.no-official-image {
+  color: #999;
+  font-size: 12px;
+}
+
+.official-table-name {
+  font-weight: 600;
+  color: #26352e;
+}
+
+.official-table-actions {
+  display: flex;
+  gap: 7px;
+}
+
+.official-table-actions button {
+  padding: 7px 12px;
+  border: none;
+  border-radius: 5px;
+  background: #14583b;
+  color: #fff;
+  cursor: pointer;
+}
+
+.official-table-actions button:hover {
+  opacity: 0.85;
+}
+
+.official-table-actions .delete-button {
+  background: #c0392b;
+}
+
+.officials-empty {
+  padding: 20px 0;
+  color: #777;
+}
+
+@media (max-width: 650px) {
+  .officials-admin-list {
+    padding: 15px;
+  }
+
+  .officials-table-filters {
+    flex-direction: column;
+  }
+
+  .officials-table-filters input,
+  .officials-table-filters select {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* News table description */
+.news-table-description {
+  min-width: 220px;
+  max-width: 300px;
+  line-height: 1.5;
+  color: #555;
+}
+
+/* =================================
+   NEWS CAROUSEL TRANSITION
+================================= */
+
+.news-slide-link {
+  opacity: 1;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.news-slide-link.carousel-exit {
+  opacity: 0;
+  transform: translateX(-25px);
+}
+
+.news-slide-link.carousel-enter {
+  animation: carouselFadeIn 0.5s ease;
+}
+
+@keyframes carouselFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.news-img img {
+  transition: transform 0.5s ease;
+}
+
+.news-slide-link:hover .news-img img {
+  transform: scale(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news-slide-link,
+  .news-img img {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.officials-reorder-note {
+  font-size: 13px;
+  color: #68756d;
+  margin-top: 5px;
+}
+
+.official-table-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.official-table-actions button {
+  min-width: 34px;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.official-table-actions .move-up-button,
+.official-table-actions .move-down-button {
+  background: #e5eee8;
+  color: #14583b;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.official-table-actions .move-up-button:hover:not(:disabled),
+.official-table-actions .move-down-button:hover:not(:disabled) {
+  background: #14583b;
+  color: white;
+}
+
+.official-table-actions button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
