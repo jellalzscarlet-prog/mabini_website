@@ -16,11 +16,10 @@ export default function AdminLogin() {
     setError("");
     setLoading(true);
 
-    const { error: loginError } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
     if (loginError) {
       setError("Invalid email or password.");
@@ -28,8 +27,7 @@ export default function AdminLogin() {
       return;
     }
 
-    const { data, error: adminError } =
-      await supabase.rpc("is_admin");
+    const { data, error: adminError } = await supabase.rpc("is_admin");
 
     if (adminError || !data) {
       await supabase.auth.signOut();
@@ -44,8 +42,16 @@ export default function AdminLogin() {
   return (
     <main className="admin-login-page">
       <div className="admin-login-card">
-        <h1>Mabini CMS</h1>
-        <p>Administrator Login</p>
+        <div className="admin-login-brand">
+          <img
+            src="/images/mabini-seal.jpg"
+            alt="Municipality of Mabini Seal"
+            className="admin-login-logo"
+          />
+
+          <h1>Mabini CMS</h1>
+          <p>Administrator Login</p>
+        </div>
 
         <form onSubmit={handleLogin}>
           <label>Email Address</label>

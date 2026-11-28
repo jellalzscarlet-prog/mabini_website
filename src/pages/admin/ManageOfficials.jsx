@@ -86,6 +86,7 @@ export default function ManageOfficials() {
     setPreview("");
     setEditingId(null);
     setMessage("");
+    setError("");
   }
 
   async function uploadImage() {
@@ -93,11 +94,10 @@ export default function ManageOfficials() {
 
     const fileExt = selectedImage.name.split(".").pop();
     const fileName = `${crypto.randomUUID()}.${fileExt}`;
-    const filePath = fileName;
 
     const { error: uploadError } = await supabase.storage
       .from("officials-images")
-      .upload(filePath, selectedImage, {
+      .upload(fileName, selectedImage, {
         cacheControl: "3600",
         upsert: false,
       });
@@ -106,7 +106,7 @@ export default function ManageOfficials() {
 
     const { data } = supabase.storage
       .from("officials-images")
-      .getPublicUrl(filePath);
+      .getPublicUrl(fileName);
 
     return data.publicUrl;
   }
@@ -198,10 +198,13 @@ export default function ManageOfficials() {
     <main className="manage-page">
       <header className="manage-header">
         <div>
-          <Link to="/admin/dashboard">← Back to Dashboard</Link>
           <h1>Manage Municipal Officials</h1>
           <p>Add, edit, and manage municipal official records.</p>
         </div>
+
+        <Link to="/admin/dashboard" className="back-button">
+          Back to Dashboard
+        </Link>
       </header>
 
       <section className="manage-form-section">

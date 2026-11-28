@@ -1156,3 +1156,286 @@ footer p {
 .service:hover {
   text-decoration: none;
 }
+
+
+/* PROCUREMENT EXCEL-STYLE TABLE */
+
+.procurement-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 30px;
+  background: #fff;
+  border: 1px solid #d8ded9;
+  border-radius: 8px;
+}
+
+.procurement-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+  text-align: left;
+}
+
+.procurement-table th,
+.procurement-table td {
+  padding: 15px 18px;
+  border: 1px solid #d8ded9;
+  vertical-align: middle;
+}
+
+.procurement-table th {
+  background: #14583b;
+  color: #fff;
+  font-weight: 600;
+}
+
+.procurement-table tbody tr:nth-child(even) {
+  background: #f5f8f5;
+}
+
+.procurement-table tbody tr:hover {
+  background: #edf4ee;
+}
+
+.procurement-pdf-link {
+  color: #14583b;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.procurement-pdf-link:hover {
+  color: #0b3825;
+}
+
+@media (max-width: 600px) {
+  .procurement-table th,
+  .procurement-table td {
+    padding: 12px;
+    font-size: 13px;
+  }
+}
+
+
+/* CMS Municipal Branding */
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.admin-brand img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+}
+
+.admin-login-logo {
+  display: block;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin: 0 auto 18px;
+}
+
+.admin-brand h1 {
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .admin-brand img {
+    width: 46px;
+    height: 46px;
+  }
+
+  .admin-login-logo {
+    width: 85px;
+    height: 85px;
+  }
+}
+
+.cms-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cms-brand img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.cms-brand h1 {
+  margin: 0;
+}
+
+.cms-brand p {
+  margin: 4px 0 0;
+}
+
+@media (max-width: 600px) {
+  .cms-brand img {
+    width: 45px;
+    height: 45px;
+  }
+}
+/* Clickable homepage news carousel */
+.news-slide-link {
+  display: flex;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.news-slide-link:hover .news-read-more {
+  text-decoration: underline;
+}
+
+.news-read-more {
+  display: inline-block;
+  margin-top: 12px;
+  color: #14583b;
+  font-weight: 700;
+}
+
+/* Full news article page */
+.news-article-page {
+  width: min(100% - 40px, 1050px);
+  margin: 50px auto;
+  padding-bottom: 50px;
+}
+
+.news-article {
+  margin-top: 30px;
+  padding: 35px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.news-article h1 {
+  margin: 10px 0;
+  color: #14583b;
+  font-size: clamp(28px, 5vw, 42px);
+  line-height: 1.25;
+}
+
+.news-article-date {
+  color: #777;
+  margin-bottom: 25px;
+  font-size: 14px;
+}
+
+.news-article-cover {
+  width: 100%;
+  max-height: 550px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin: 15px 0 25px;
+}
+
+.news-article-description {
+  color: #39443d;
+  font-size: 16px;
+  line-height: 1.9;
+  white-space: normal;
+}
+
+.news-article-description p {
+  margin-bottom: 18px;
+}
+
+.news-article-gallery {
+  margin-top: 40px;
+}
+
+.news-article-gallery h2 {
+  color: #14583b;
+  margin-bottom: 20px;
+}
+
+/* Gallery grid used in the article and CMS */
+.news-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.news-gallery-item {
+  min-width: 0;
+}
+
+.news-gallery-grid img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+.news-gallery-item button {
+  margin-top: 8px;
+}
+
+.form-hint {
+  color: #777;
+  font-size: 13px;
+  margin: 4px 0 10px;
+}
+
+@media (max-width: 700px) {
+  .news-article-page {
+    width: calc(100% - 24px);
+    margin: 25px auto;
+  }
+
+  .news-article {
+    padding: 20px;
+  }
+
+  .news-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .news-gallery-grid img {
+    height: 150px;
+  }
+
+  .news-slide-link {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 400px) {
+  .news-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-login-brand {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.admin-login-logo {
+  display: block;
+  width: 85px;
+  height: 85px;
+  object-fit: contain;
+  margin: 0 auto 12px;
+}
+
+.admin-login-brand h1 {
+  margin: 0 0 5px;
+}
+
+.admin-login-brand p {
+  margin: 0;
+}

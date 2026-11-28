@@ -17,7 +17,7 @@ export default function ProcurementList({ category, title }) {
         .from("procurement")
         .select("*")
         .eq("category", category)
-        .order("created_at", { ascending: false });
+        .order("project_date", { ascending: false });
 
       if (error) {
         setError(error.message);
@@ -32,8 +32,18 @@ export default function ProcurementList({ category, title }) {
     fetchRecords();
   }, [category]);
 
+  function formatDate(date) {
+    if (!date) return "—";
+
+    return new Date(`${date}T00:00:00`).toLocaleDateString("en-PH", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
   return (
-    <section className="section">
+    <section className="section procurement-list-page">
       <div className="section-heading">
         <p className="eyebrow green">
           TRANSPARENCY &amp; ACCOUNTABILITY
@@ -42,11 +52,12 @@ export default function ProcurementList({ category, title }) {
         <h2>{title}</h2>
 
         <p>
-          Municipality of Mabini, Pangasinan
+          Official {title} records of the Municipality of Mabini,
+          Pangasinan.
         </p>
       </div>
 
-      <div className="service-grid">
+      <div className="procurement-table-wrapper">
         {loading ? (
           <p>Loading records...</p>
         ) : error ? (
@@ -54,23 +65,40 @@ export default function ProcurementList({ category, title }) {
         ) : records.length === 0 ? (
           <p>No records available yet.</p>
         ) : (
-          records.map((item) => (
-            <div className="service" key={item.id}>
-              <h3>{item.title}</h3>
+          <table className="procurement-table">
+            <thead>
+              <tr>
+                <th>Name of Project</th>
+                <th>PDF File</th>
+                <th>Date</th>
+              </tr>
+            </thead>
 
-              <p>{item.description || "No description available."}</p>
+            <tbody>
+              {records.map((record) => (
+                <tr key={record.id}>
+                  <td>{record.title}</td>
 
-              {item.document_url && (
-                <a
-                  href={item.document_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <strong>View PDF Document →</strong>
-                </a>
-              )}
-            </div>
-          ))
+                  <td>
+                    {record.document_url ? (
+                      <a
+                        href={record.document_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="procurement-pdf-link"
+                      >
+                        View PDF
+                      </a>
+                    ) : (
+                      "No PDF available"
+                    )}
+                  </td>
+
+                  <td>{formatDate(record.project_date)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 

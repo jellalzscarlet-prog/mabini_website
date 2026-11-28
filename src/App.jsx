@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
@@ -10,24 +11,15 @@ import ViceMayor from "./pages/ViceMayor.jsx";
 import Officials from "./pages/Officials.jsx";
 import Members from "./pages/Members.jsx";
 import Procurement from "./pages/Procurement.jsx";
+import ProcurementList from "./pages/ProcurementList.jsx";
+import NewsArticle from "./pages/NewsArticle.jsx";
 
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminGuard from "./pages/admin/AdminGuard.jsx";
-
 import ManageNews from "./pages/admin/ManageNews.jsx";
 import ManageOfficials from "./pages/admin/ManageOfficials.jsx";
 import ManageProcurement from "./pages/admin/ManageProcurement.jsx";
-import ProcurementList from "./pages/ProcurementList.jsx";
-function ComingSoon({ title }) {
-  return (
-    <main className="admin-dashboard">
-      <h1>{title}</h1>
-      <p>This management page is not yet available.</p>
-      <a href="/admin/dashboard">Back to Dashboard</a>
-    </main>
-  );
-}
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -57,7 +49,10 @@ export default function App() {
   return (
     <>
       {!isAdminRoute && (
-        <Sidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
+        <Sidebar
+          open={sidebarOpen}
+          onOpenChange={setSidebarOpen}
+        />
       )}
 
       <div
@@ -70,11 +65,32 @@ export default function App() {
         <Routes>
           {/* Public Website */}
           <Route path="/" element={<Home />} />
+          <Route path="/news/:id" element={<NewsArticle />} />
           <Route path="/mayor" element={<Mayor />} />
           <Route path="/vice-mayor" element={<ViceMayor />} />
           <Route path="/officials" element={<Officials />} />
           <Route path="/members" element={<Members />} />
           <Route path="/procurement" element={<Procurement />} />
+
+          <Route
+            path="/procurement/plan"
+            element={
+              <ProcurementList
+                category="Procurement Plan"
+                title="Procurement Plan"
+              />
+            }
+          />
+
+          <Route
+            path="/procurement/bids"
+            element={
+              <ProcurementList
+                category="Bids"
+                title="Bids"
+              />
+            }
+          />
 
           {/* CMS Login */}
           <Route path="/admin" element={<AdminLogin />} />
@@ -106,20 +122,6 @@ export default function App() {
                 <ManageOfficials />
               </AdminGuard>
             }
-          />
-          <Route
-            path="/procurement/plan"
-            element={
-              <ProcurementList
-                category="Procurement Plan"
-                title="Procurement Plan"
-              />
-            }
-          />
-
-          <Route
-            path="/procurement/bids"
-            element={<ProcurementList category="Bids" title="Bids" />}
           />
 
           <Route

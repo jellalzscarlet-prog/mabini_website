@@ -13,14 +13,19 @@ export default function AdminDashboard() {
   return (
     <main className="admin-dashboard">
       <header className="admin-header">
-        <div>
-          <h1>Mabini CMS</h1>
-          <p>Municipal Website Management System</p>
+        <div className="cms-brand">
+          <img
+            src="/images/mabini-seal.jpg"
+            alt="Municipality of Mabini Seal"
+          />
+
+          <div>
+            <h1>Mabini CMS</h1>
+            <p>Municipal Website Management System</p>
+          </div>
         </div>
 
-        <button onClick={handleLogout}>
-          Logout
-        </button>
+        <button onClick={handleLogout}>Logout</button>
       </header>
 
       <section className="admin-content">
@@ -39,8 +44,8 @@ export default function AdminDashboard() {
           </Link>
 
           <Link to="/admin/procurement" className="admin-card">
-            <h3>Procurement & Awards</h3>
-            <p>Manage procurement plans and awards.</p>
+            <h3>Procurement & Bids</h3>
+            <p>Manage procurement plans and bidding records.</p>
           </Link>
         </div>
       </section>

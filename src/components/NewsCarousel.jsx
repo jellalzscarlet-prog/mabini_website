@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 export default function NewsCarousel() {
@@ -8,7 +9,6 @@ export default function NewsCarousel() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch news from Supabase
   useEffect(() => {
     async function fetchNews() {
       const { data, error } = await supabase
@@ -30,7 +30,6 @@ export default function NewsCarousel() {
 
     fetchNews();
 
-    // Listen for news changes in Supabase
     const channel = supabase
       .channel("news-carousel-updates")
       .on(
@@ -40,9 +39,7 @@ export default function NewsCarousel() {
           schema: "public",
           table: "news",
         },
-        () => {
-          fetchNews();
-        }
+        fetchNews
       )
       .subscribe();
 
@@ -51,7 +48,6 @@ export default function NewsCarousel() {
     };
   }, []);
 
-  // Automatic slide rotation every 6 seconds
   useEffect(() => {
     if (slides.length <= 1) return;
 
@@ -63,15 +59,11 @@ export default function NewsCarousel() {
   }, [slides.length]);
 
   function previousSlide() {
-    setIndex((i) =>
-      i === 0 ? slides.length - 1 : i - 1
-    );
+    setIndex((i) => (i === 0 ? slides.length - 1 : i - 1));
   }
 
   function nextSlide() {
-    setIndex((i) =>
-      (i + 1) % slides.length
-    );
+    setIndex((i) => (i + 1) % slides.length);
   }
 
   if (loading) {
@@ -102,19 +94,16 @@ export default function NewsCarousel() {
 
   return (
     <div className="news-carousel">
-      <div className="news-slide" key={currentSlide.id}>
+      <Link
+        to={`/news/${currentSlide.id}`}
+        className="news-slide news-slide-link"
+        key={currentSlide.id}
+      >
         <div className="news-img">
-          {currentSlide.image_url ? (
-            <img
-              src={currentSlide.image_url}
-              alt={currentSlide.title}
-            />
-          ) : (
-            <img
-              src="/images/mabini-seal.jpg"
-              alt="Mabini Municipal Seal"
-            />
-          )}
+          <img
+            src={currentSlide.image_url || "/images/mabini-seal.jpg"}
+            alt={currentSlide.title}
+          />
         </div>
 
         <div className="news-text">
@@ -123,15 +112,21 @@ export default function NewsCarousel() {
           <h3>{currentSlide.title}</h3>
 
           <p>
-            {currentSlide.description ||
-              "No description available."}
+            {currentSlide.description
+              ? `${currentSlide.description.slice(0, 180)}${
+                  currentSlide.description.length > 180 ? "..." : ""
+                }`
+              : "No description available."}
           </p>
+
+          <span className="news-read-more">Read Full Article →</span>
         </div>
-      </div>
+      </Link>
 
       {slides.length > 1 && (
         <>
           <button
+            type="button"
             className="carousel-btn prev"
             onClick={previousSlide}
             aria-label="Previous slide"
@@ -140,6 +135,7 @@ export default function NewsCarousel() {
           </button>
 
           <button
+            type="button"
             className="carousel-btn next"
             onClick={nextSlide}
             aria-label="Next slide"
@@ -150,6 +146,7 @@ export default function NewsCarousel() {
           <div className="dots">
             {slides.map((slide, n) => (
               <button
+                type="button"
                 key={slide.id}
                 className={index === n ? "active" : ""}
                 aria-label={`Go to slide ${n + 1}`}
