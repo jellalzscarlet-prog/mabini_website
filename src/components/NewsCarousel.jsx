@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
@@ -8,6 +8,9 @@ export default function NewsCarousel() {
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const touchStartX = useRef(0);
+  const lastSwipeTime = useRef(0);
 
   useEffect(() => {
     async function fetchNews() {
@@ -59,13 +62,46 @@ export default function NewsCarousel() {
   }, [slides.length]);
 
   function previousSlide() {
+    if (slides.length <= 1) return;
+
     setIndex((current) =>
       current === 0 ? slides.length - 1 : current - 1
     );
   }
 
   function nextSlide() {
+    if (slides.length <= 1) return;
+
     setIndex((current) => (current + 1) % slides.length);
+  }
+
+  function handleTouchStart(e) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e) {
+    if (slides.length <= 1) return;
+
+    const touchEndX = e.changedTouches[0].clientX;
+    const difference = touchStartX.current - touchEndX;
+
+    // Ignore small movements
+    if (Math.abs(difference) < 50) return;
+
+    lastSwipeTime.current = Date.now();
+
+    if (difference > 0) {
+      nextSlide();
+    } else {
+      previousSlide();
+    }
+  }
+
+  function preventSwipeClick(e) {
+    // Prevent opening the article when the user swipes
+    if (Date.now() - lastSwipeTime.current < 500) {
+      e.preventDefault();
+    }
   }
 
   if (loading) {
@@ -95,11 +131,16 @@ export default function NewsCarousel() {
   const currentSlide = slides[index];
 
   return (
-    <div className="news-carousel">
+    <div
+      className="news-carousel"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <Link
         to={`/news/${currentSlide.id}`}
         className="news-slide news-slide-link"
         key={currentSlide.id}
+        onClickCapture={preventSwipeClick}
       >
         <div className="news-img">
           <img
@@ -109,7 +150,9 @@ export default function NewsCarousel() {
         </div>
 
         <div className="news-text">
-          <span className="news-category">COMMUNITY NEWS & EVENTS</span>
+          <span className="news-category">
+            COMMUNITY NEWS & EVENTS
+          </span>
 
           <h3>{currentSlide.title}</h3>
 
@@ -129,15 +172,6 @@ export default function NewsCarousel() {
 
       {slides.length > 1 && (
         <div className="news-carousel-controls">
-          <button
-            type="button"
-            className="carousel-btn"
-            onClick={previousSlide}
-            aria-label="Previous news article"
-          >
-            &#10094;
-          </button>
-
           <div className="dots">
             {slides.map((slide, n) => (
               <button
@@ -150,15 +184,6 @@ export default function NewsCarousel() {
               />
             ))}
           </div>
-
-          <button
-            type="button"
-            className="carousel-btn"
-            onClick={nextSlide}
-            aria-label="Next news article"
-          >
-            &#10095;
-          </button>
         </div>
       )}
     </div>

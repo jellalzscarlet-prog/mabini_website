@@ -1724,3 +1724,23 @@ footer p {
     font-size: 12px;
   }
 }
+
+/* News carousel: mobile swipe support */
+.news-carousel {
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.news-slide-link {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.news-img img {
+  pointer-events: none;
+}
+
+/* Hide previous and next arrow buttons */
+.carousel-btn {
+  display: none !important;
+}
