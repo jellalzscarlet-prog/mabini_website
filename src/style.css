@@ -1,8 +1,11 @@
+
 :root {
   font-family: Arial, Helvetica, sans-serif;
   color: #26352e;
   line-height: 1.65;
   background: #f5f1e7;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -15,11 +18,23 @@ html {
 
 body {
   margin: 0;
+  min-width: 320px;
 }
 
 img {
   max-width: 100%;
   display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
 }
 
 /* =========================
@@ -38,7 +53,11 @@ img {
   font-size: 22px;
   padding: 10px 14px;
   cursor: pointer;
-  transition: left 0.28s ease;
+  transition: left 0.28s ease, background 0.2s ease;
+}
+
+.index-toggle:hover {
+  background: #0d422b;
 }
 
 /* =========================
@@ -50,12 +69,13 @@ img {
   z-index: 40;
   inset: 0 auto 0 0;
   width: 310px;
+  max-width: 85vw;
   background: #fff;
   padding: 25px;
   box-shadow: 0 5px 24px #0002;
   transform: translateX(-110%);
   transition: transform 0.25s ease;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .sidebar.open {
@@ -91,6 +111,7 @@ img {
   width: 58px;
   height: 58px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .nav-label {
@@ -99,10 +120,6 @@ img {
   color: #888;
   margin: 20px 0;
 }
-
-/* =========================
-   SIDEBAR NAVIGATION
-========================= */
 
 .side-nav {
   display: grid;
@@ -144,9 +161,7 @@ img {
   min-height: 100vh;
   margin-left: 0;
   width: 100%;
-  transition:
-    margin-left 0.28s ease,
-    width 0.28s ease;
+  transition: margin-left 0.28s ease, width 0.28s ease;
 }
 
 .page-content.sidebar-open {
@@ -181,9 +196,10 @@ section[id] {
 
 .section-heading h2,
 .about h2 {
-  font-size: 34px;
+  font-size: clamp(26px, 3vw, 34px);
   color: #14583b;
   margin: 5px 0;
+  line-height: 1.3;
 }
 
 .eyebrow {
@@ -207,6 +223,7 @@ section[id] {
   display: flex;
   align-items: center;
   color: white;
+  overflow: hidden;
 }
 
 .hero > img {
@@ -244,6 +261,11 @@ section[id] {
   text-decoration: none;
   font-weight: bold;
   margin-top: 18px;
+  transition: background 0.2s ease;
+}
+
+.button:hover {
+  background: #c6a65e;
 }
 
 /* =========================
@@ -281,6 +303,12 @@ section[id] {
   box-shadow: 0 5px 18px #00000010;
   color: inherit;
   text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px #00000018;
 }
 
 .card > img {
@@ -320,9 +348,19 @@ section[id] {
 }
 
 .service {
+  display: block;
   padding: 24px;
   background: #fff;
   border-radius: 8px;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.service:hover {
+  text-decoration: none;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 18px #00000012;
 }
 
 .service span {
@@ -350,47 +388,97 @@ section[id] {
 
 .news-carousel {
   position: relative;
-  max-width: 1000px;
-  margin: auto;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 6px 24px #0001;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
 }
 
 .news-slide {
-  display: flex;
-  min-height: 420px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  min-height: 390px;
 }
 
 .news-img {
-  flex: 0 0 45%;
+  width: 100%;
+  min-width: 0;
+  height: 390px;
+  overflow: hidden;
   background: #e8efe8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .news-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 .news-text {
-  padding: 32px;
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 42px;
+  min-width: 0;
+}
+
+.news-text .eyebrow {
+  margin: 0 0 12px;
 }
 
 .news-text h3 {
   color: #14583b;
-  font-size: 26px;
+  font-size: clamp(23px, 2.5vw, 32px);
+  line-height: 1.3;
+  margin: 0 0 16px;
+  overflow-wrap: anywhere;
 }
 
-/* Carousel arrows */
+.news-text p {
+  color: #66716b;
+  line-height: 1.8;
+  margin: 0 0 10px;
+}
+
+.news-category {
+  color: #2e7d32;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  margin-bottom: 15px;
+}
+
+/* Clickable news slide */
+
+.news-slide-link {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.news-slide-link:hover .news-read-more {
+  text-decoration: underline;
+}
+
+.news-read-more {
+  display: inline-block;
+  margin-top: 12px;
+  color: #14583b;
+  font-weight: 700;
+}
+
+/* Carousel controls */
 
 .carousel-btn {
   position: absolute;
+  z-index: 5;
   top: 50%;
   transform: translateY(-50%);
   width: 42px;
@@ -401,6 +489,14 @@ section[id] {
   color: #14583b;
   box-shadow: 0 2px 8px #0003;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.carousel-btn:hover {
+  background: #e9f0e9;
 }
 
 .prev {
@@ -415,11 +511,15 @@ section[id] {
 
 .dots {
   position: absolute;
+  z-index: 6;
   bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 8px;
+  padding: 7px 10px;
+  border-radius: 20px;
+  background: #ffffffb8;
 }
 
 .dots button {
@@ -429,6 +529,7 @@ section[id] {
   border-radius: 50%;
   background: #bbb;
   cursor: pointer;
+  padding: 0;
 }
 
 .dots button.active {
@@ -479,9 +580,13 @@ section[id] {
   margin-bottom: 24px;
 }
 
+.back-button:hover {
+  text-decoration: underline;
+}
+
 .profile-container {
   display: grid;
-  grid-template-columns: 350px 1fr;
+  grid-template-columns: 350px minmax(0, 1fr);
   gap: 40px;
   background: #fff;
   padding: 35px;
@@ -501,6 +606,7 @@ section[id] {
   color: #14583b;
   font-size: 32px;
   margin: 0 0 8px;
+  line-height: 1.25;
 }
 
 .profile-info h2 {
@@ -515,6 +621,14 @@ section[id] {
 
 .profile-details p {
   margin: 10px 0;
+}
+
+/* Center Back to Officials button */
+
+.profile-page > .back-button {
+  display: table;
+  margin: 0 auto 24px;
+  text-align: center;
 }
 
 /* =========================
@@ -537,6 +651,7 @@ section[id] {
   background: #fff;
   padding: 24px;
   border-radius: 8px;
+  overflow: hidden;
 }
 
 .member-toolbar {
@@ -550,6 +665,7 @@ section[id] {
 .toolbar-buttons {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .toolbar-buttons button {
@@ -562,7 +678,8 @@ section[id] {
 }
 
 .table-wrapper {
-  overflow: auto;
+  width: 100%;
+  overflow-x: auto;
 }
 
 table {
@@ -610,77 +727,9 @@ footer p {
 }
 
 /* =========================
-   RESPONSIVE DESIGN
+   ADMIN LOGIN
 ========================= */
 
-@media (max-width: 760px) {
-  .page-content.sidebar-open {
-    margin-left: 0;
-    width: 100%;
-  }
-
-  .index-toggle.sidebar-open {
-    left: 18px;
-  }
-
-  .sidebar-overlay {
-    display: block;
-  }
-
-  .section {
-    padding: 45px 5%;
-  }
-
-  .about {
-    grid-template-columns: 1fr;
-  }
-
-  .hero {
-    min-height: 520px;
-  }
-
-  .hero-copy {
-    padding: 90px 6%;
-  }
-
-  .news-slide {
-    flex-direction: column;
-    min-height: 560px;
-  }
-
-  .news-img {
-    flex: 0 0 210px;
-  }
-
-  .news-text {
-    padding: 18px 18px 45px;
-  }
-
-  .profile-container {
-    grid-template-columns: 1fr;
-    padding: 20px;
-    gap: 24px;
-  }
-
-  .profile-image img {
-    height: 350px;
-  }
-
-  .profile-info h1 {
-    font-size: 26px;
-  }
-
-  .profile-page {
-    padding: 25px 16px;
-  }
-
-  .members-page {
-    padding: 22px 4%;
-  }
-}
-
-
-/* ADMIN LOGIN */
 .admin-login-page {
   min-height: 100vh;
   display: flex;
@@ -696,7 +745,7 @@ footer p {
   max-width: 420px;
   padding: 35px;
   border-radius: 12px;
-  box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
 }
 
 .admin-login-card h1 {
@@ -712,6 +761,7 @@ footer p {
 }
 
 .admin-login-card input {
+  width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -728,11 +778,19 @@ footer p {
   cursor: pointer;
 }
 
+.admin-login-card button:hover,
+.admin-header button:hover {
+  background: #0d422b;
+}
+
 .admin-error {
   color: #c62828;
 }
 
-/* ADMIN DASHBOARD */
+/* =========================
+   ADMIN DASHBOARD
+========================= */
+
 .admin-dashboard {
   min-height: 100vh;
   background: #f5f1e7;
@@ -765,37 +823,31 @@ footer p {
 }
 
 .admin-card {
+  display: block;
   background: white;
   padding: 25px;
   border-radius: 10px;
   text-decoration: none;
   color: #26352e;
-  transition: 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .admin-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
 }
 
 .admin-card h3 {
   color: #12613f;
 }
 
-@media (max-width: 600px) {
-  .admin-dashboard {
-    padding: 15px;
-  }
-
-  .admin-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
+/* =========================
+   MANAGE PAGES
+========================= */
 
 .manage-page {
   max-width: 1100px;
+  width: calc(100% - 40px);
   margin: 30px auto;
   padding: 25px;
   color: #26352e;
@@ -812,14 +864,6 @@ footer p {
 
 .manage-header h1 {
   color: #126044;
-}
-
-.back-button {
-  background: #126044;
-  color: white;
-  padding: 12px 18px;
-  border-radius: 6px;
-  text-decoration: none;
 }
 
 .manage-form-section,
@@ -843,6 +887,11 @@ footer p {
   border: 1px solid #ccc;
   border-radius: 6px;
   font: inherit;
+}
+
+.manage-form textarea {
+  min-height: 120px;
+  resize: vertical;
 }
 
 .manage-form button,
@@ -893,6 +942,7 @@ footer p {
   padding: 15px;
   border: 1px solid #ddd;
   border-radius: 10px;
+  min-width: 0;
 }
 
 .news-admin-card img {
@@ -900,22 +950,18 @@ footer p {
   height: 120px;
   object-fit: cover;
   border-radius: 8px;
+  flex-shrink: 0;
 }
 
 .news-admin-info {
   flex: 1;
+  min-width: 0;
 }
 
-@media (max-width: 600px) {
-  .news-admin-card {
-    flex-direction: column;
-  }
+/* =========================
+   OFFICIALS ADMIN
+========================= */
 
-  .news-admin-card img {
-    width: 100%;
-    height: 180px;
-  }
-}
 .official-preview {
   width: 140px;
   height: 140px;
@@ -934,13 +980,18 @@ footer p {
   background: #fff;
   border: 1px solid #e5e5e5;
   border-radius: 10px;
+  min-width: 0;
 }
 
 .official-admin-card .official-preview {
   width: 75px;
   height: 75px;
+  flex-shrink: 0;
 }
 
+/* =========================
+   ADMIN FORMS
+========================= */
 
 .admin-form-card {
   background: #fff;
@@ -964,6 +1015,11 @@ footer p {
   border: 1px solid #ddd;
   border-radius: 7px;
   font: inherit;
+}
+
+.admin-form-card textarea {
+  min-height: 110px;
+  resize: vertical;
 }
 
 .admin-form-card label {
@@ -1007,6 +1063,10 @@ footer p {
   font-size: 13px;
 }
 
+/* =========================
+   PROCUREMENT ADMIN
+========================= */
+
 .procurement-admin-card {
   display: flex;
   justify-content: space-between;
@@ -1017,6 +1077,7 @@ footer p {
   background: #fff;
   border: 1px solid #e5e5e5;
   border-radius: 10px;
+  min-width: 0;
 }
 
 .procurement-admin-card h3 {
@@ -1027,13 +1088,6 @@ footer p {
   font-size: 12px;
   color: #28734d;
   font-weight: 700;
-}
-
-@media (max-width: 650px) {
-  .procurement-admin-card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
 
 /* =========================
@@ -1095,59 +1149,10 @@ footer p {
   text-align: center;
 }
 
-/* MOBILE VIEW */
-@media (max-width: 600px) {
-  .officials-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-  }
+/* =========================
+   PROCUREMENT LINKS
+========================= */
 
-  .officials-image-wrapper {
-    height: 155px;
-  }
-
-  .officials-image-wrapper img {
-    object-position: center center;
-  }
-
-  .officials-image-wrapper img.logo {
-    padding: 16px;
-  }
-
-  .officials-card .card-body {
-    padding: 14px 8px;
-  }
-
-  .officials-card .card-body h3 {
-    font-size: 14px;
-    line-height: 1.4;
-  }
-
-  .officials-card .card-body p {
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 360px) {
-  .officials-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .officials-image-wrapper {
-    height: 200px;
-  }
-}
-
-
-/* Center Back to Officials button */
-.profile-page > .back-button {
-  display: table;
-  margin: 0 auto 24px;
-  text-align: center;
-}
-
-
-/* Remove default blue underline from Procurement links */
 .service {
   color: inherit;
   text-decoration: none;
@@ -1157,8 +1162,9 @@ footer p {
   text-decoration: none;
 }
 
-
-/* PROCUREMENT EXCEL-STYLE TABLE */
+/* =========================
+   PROCUREMENT TABLE
+========================= */
 
 .procurement-table-wrapper {
   width: 100%;
@@ -1207,21 +1213,15 @@ footer p {
   color: #0b3825;
 }
 
-@media (max-width: 600px) {
-  .procurement-table th,
-  .procurement-table td {
-    padding: 12px;
-    font-size: 13px;
-  }
-}
-
-
-/* CMS Municipal Branding */
+/* =========================
+   CMS MUNICIPAL BRANDING
+========================= */
 
 .admin-brand {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
 .admin-brand img {
@@ -1231,36 +1231,18 @@ footer p {
   background: white;
   border-radius: 50%;
   padding: 4px;
-}
-
-.admin-login-logo {
-  display: block;
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  margin: 0 auto 18px;
+  flex-shrink: 0;
 }
 
 .admin-brand h1 {
   margin: 0;
 }
 
-@media (max-width: 600px) {
-  .admin-brand img {
-    width: 46px;
-    height: 46px;
-  }
-
-  .admin-login-logo {
-    width: 85px;
-    height: 85px;
-  }
-}
-
 .cms-brand {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
 .cms-brand img {
@@ -1278,32 +1260,31 @@ footer p {
   margin: 4px 0 0;
 }
 
-@media (max-width: 600px) {
-  .cms-brand img {
-    width: 45px;
-    height: 45px;
-  }
-}
-/* Clickable homepage news carousel */
-.news-slide-link {
-  display: flex;
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
+.admin-login-brand {
+  text-align: center;
+  margin-bottom: 28px;
 }
 
-.news-slide-link:hover .news-read-more {
-  text-decoration: underline;
+.admin-login-logo {
+  display: block;
+  width: 85px;
+  height: 85px;
+  object-fit: contain;
+  margin: 0 auto 12px;
 }
 
-.news-read-more {
-  display: inline-block;
-  margin-top: 12px;
-  color: #14583b;
-  font-weight: 700;
+.admin-login-brand h1 {
+  margin: 0 0 5px;
 }
 
-/* Full news article page */
+.admin-login-brand p {
+  margin: 0;
+}
+
+/* =========================
+   NEWS ARTICLE PAGE
+========================= */
+
 .news-article-page {
   width: min(100% - 40px, 1050px);
   margin: 50px auto;
@@ -1323,6 +1304,7 @@ footer p {
   color: #14583b;
   font-size: clamp(28px, 5vw, 42px);
   line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .news-article-date {
@@ -1344,6 +1326,7 @@ footer p {
   font-size: 16px;
   line-height: 1.9;
   white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .news-article-description p {
@@ -1360,6 +1343,7 @@ footer p {
 }
 
 /* Gallery grid used in the article and CMS */
+
 .news-gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1389,7 +1373,158 @@ footer p {
   margin: 4px 0 10px;
 }
 
-@media (max-width: 700px) {
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 1000px) {
+  .profile-container {
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 25px;
+  }
+
+  .news-text {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 760px) {
+  .page-content.sidebar-open {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .index-toggle.sidebar-open {
+    left: 18px;
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .section {
+    padding: 45px 5%;
+  }
+
+  .section-heading {
+    margin-bottom: 25px;
+  }
+
+  .about {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .about-photo img {
+    height: 280px;
+  }
+
+  .hero {
+    min-height: 520px;
+  }
+
+  .hero-copy {
+    padding: 90px 6%;
+  }
+
+  /* News carousel mobile layout */
+
+  .news-carousel {
+    border-radius: 12px;
+  }
+
+  .news-slide,
+  .news-slide-link {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .news-img {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    flex: none;
+  }
+
+  .news-img img {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    object-fit: cover;
+  }
+
+  .news-text {
+    width: 100%;
+    padding: 25px 22px 55px;
+    justify-content: flex-start;
+  }
+
+  .news-text h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .news-text p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .news-read-more {
+    margin-top: 8px;
+  }
+
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .prev {
+    left: 10px;
+  }
+
+  .next {
+    right: 10px;
+  }
+
+  .dots {
+    bottom: 10px;
+  }
+
+  /* Profile page */
+
+  .profile-container {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 24px;
+  }
+
+  .profile-image img {
+    height: 350px;
+  }
+
+  .profile-info h1 {
+    font-size: 26px;
+  }
+
+  .profile-page {
+    padding: 25px 16px;
+  }
+
+  /* Members page */
+
+  .members-page {
+    padding: 22px 4%;
+  }
+
+  .members-container {
+    padding: 15px;
+  }
+
+  /* News article page */
+
   .news-article-page {
     width: calc(100% - 24px);
     margin: 25px auto;
@@ -1408,34 +1543,184 @@ footer p {
     height: 150px;
   }
 
-  .news-slide-link {
+  /* Admin pages */
+
+  .admin-dashboard {
+    padding: 20px;
+  }
+
+  .admin-header {
     flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .manage-page {
+    width: calc(100% - 20px);
+    padding: 12px;
+    margin: 15px auto;
+  }
+
+  .manage-form-section,
+  .news-list-section,
+  .admin-form-card {
+    padding: 18px;
+  }
+
+  .news-admin-card {
+    flex-direction: column;
+  }
+
+  .news-admin-card img {
+    width: 100%;
+    height: 190px;
+  }
+
+  .official-admin-card {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .procurement-admin-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-brand img {
+    width: 46px;
+    height: 46px;
+  }
+
+  .cms-brand img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .admin-login-logo {
+    width: 85px;
+    height: 85px;
   }
 }
 
+/* =========================
+   SMALL MOBILE DEVICES
+========================= */
+
+@media (max-width: 600px) {
+  .officials-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .officials-image-wrapper {
+    height: 155px;
+  }
+
+  .officials-image-wrapper img {
+    object-position: center center;
+  }
+
+  .officials-image-wrapper img.logo {
+    padding: 16px;
+  }
+
+  .officials-card .card-body {
+    padding: 14px 8px;
+  }
+
+  .officials-card .card-body h3 {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .officials-card .card-body p {
+    font-size: 12px;
+  }
+
+  .procurement-table th,
+  .procurement-table td {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .admin-dashboard {
+    padding: 15px;
+  }
+
+  .admin-header {
+    padding: 18px;
+  }
+
+  .admin-header h1 {
+    font-size: 23px;
+  }
+
+  .admin-login-card {
+    padding: 25px 20px;
+  }
+
+  .toolbar-buttons {
+    width: 100%;
+  }
+}
+
+/* =========================
+   EXTRA SMALL MOBILE
+========================= */
+
 @media (max-width: 400px) {
+  .section {
+    padding: 38px 16px;
+  }
+
+  .hero {
+    min-height: 470px;
+  }
+
+  .hero-copy {
+    padding: 80px 20px;
+  }
+
+  .news-text {
+    padding: 20px 17px 52px;
+  }
+
+  .news-text h3 {
+    font-size: 21px;
+  }
+
   .news-gallery-grid {
     grid-template-columns: 1fr;
   }
-}
 
-.admin-login-brand {
-  text-align: center;
-  margin-bottom: 28px;
-}
+  .news-gallery-grid img {
+    height: 190px;
+  }
 
-.admin-login-logo {
-  display: block;
-  width: 85px;
-  height: 85px;
-  object-fit: contain;
-  margin: 0 auto 12px;
-}
+  .officials-grid {
+    grid-template-columns: 1fr;
+  }
 
-.admin-login-brand h1 {
-  margin: 0 0 5px;
-}
+  .officials-image-wrapper {
+    height: 200px;
+  }
 
-.admin-login-brand p {
-  margin: 0;
+  .profile-image img {
+    height: 280px;
+  }
+
+  .admin-login-card {
+    padding: 22px 16px;
+  }
+
+  .cms-brand {
+    gap: 9px;
+  }
+
+  .cms-brand h1 {
+    font-size: 21px;
+  }
+
+  .cms-brand p {
+    font-size: 12px;
+  }
 }

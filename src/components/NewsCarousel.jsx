@@ -52,23 +52,25 @@ export default function NewsCarousel() {
     if (slides.length <= 1) return;
 
     const timer = setInterval(() => {
-      setIndex((i) => (i + 1) % slides.length);
+      setIndex((current) => (current + 1) % slides.length);
     }, 6000);
 
     return () => clearInterval(timer);
   }, [slides.length]);
 
   function previousSlide() {
-    setIndex((i) => (i === 0 ? slides.length - 1 : i - 1));
+    setIndex((current) =>
+      current === 0 ? slides.length - 1 : current - 1
+    );
   }
 
   function nextSlide() {
-    setIndex((i) => (i + 1) % slides.length);
+    setIndex((current) => (current + 1) % slides.length);
   }
 
   if (loading) {
     return (
-      <div className="news-carousel">
+      <div className="news-carousel news-carousel-message">
         <p>Loading news and events...</p>
       </div>
     );
@@ -76,7 +78,7 @@ export default function NewsCarousel() {
 
   if (error) {
     return (
-      <div className="news-carousel">
+      <div className="news-carousel news-carousel-message">
         <p>{error}</p>
       </div>
     );
@@ -84,7 +86,7 @@ export default function NewsCarousel() {
 
   if (slides.length === 0) {
     return (
-      <div className="news-carousel">
+      <div className="news-carousel news-carousel-message">
         <p>No news and events available at the moment.</p>
       </div>
     );
@@ -107,40 +109,33 @@ export default function NewsCarousel() {
         </div>
 
         <div className="news-text">
-          <p className="eyebrow green">COMMUNITY NEWS</p>
+          <span className="news-category">COMMUNITY NEWS & EVENTS</span>
 
           <h3>{currentSlide.title}</h3>
 
-          <p>
+          <p className="news-description">
             {currentSlide.description
-              ? `${currentSlide.description.slice(0, 180)}${
-                  currentSlide.description.length > 180 ? "..." : ""
+              ? `${currentSlide.description.slice(0, 220)}${
+                  currentSlide.description.length > 220 ? "..." : ""
                 }`
               : "No description available."}
           </p>
 
-          <span className="news-read-more">Read Full Article →</span>
+          <span className="news-read-more">
+            Read Full Article <span aria-hidden="true">→</span>
+          </span>
         </div>
       </Link>
 
       {slides.length > 1 && (
-        <>
+        <div className="news-carousel-controls">
           <button
             type="button"
-            className="carousel-btn prev"
+            className="carousel-btn"
             onClick={previousSlide}
-            aria-label="Previous slide"
+            aria-label="Previous news article"
           >
-            ❮
-          </button>
-
-          <button
-            type="button"
-            className="carousel-btn next"
-            onClick={nextSlide}
-            aria-label="Next slide"
-          >
-            ❯
+            &#10094;
           </button>
 
           <div className="dots">
@@ -149,12 +144,22 @@ export default function NewsCarousel() {
                 type="button"
                 key={slide.id}
                 className={index === n ? "active" : ""}
-                aria-label={`Go to slide ${n + 1}`}
+                aria-label={`Go to news article ${n + 1}`}
+                aria-current={index === n ? "true" : undefined}
                 onClick={() => setIndex(n)}
               />
             ))}
           </div>
-        </>
+
+          <button
+            type="button"
+            className="carousel-btn"
+            onClick={nextSlide}
+            aria-label="Next news article"
+          >
+            &#10095;
+          </button>
+        </div>
       )}
     </div>
   );
