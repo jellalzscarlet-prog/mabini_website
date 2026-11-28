@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
@@ -14,8 +13,8 @@ export default function ViceMayor() {
         .from("officials")
         .select("*")
         .eq("group_name", "Municipal Vice Mayor")
-        .limit(1)
-        .maybeSingle();
+        .order("sort_order", { ascending: true })
+        .order("id", { ascending: true });
 
       if (error) {
         setError(error.message);
@@ -51,9 +50,7 @@ export default function ViceMayor() {
           </div>
 
           <div className="profile-info">
-            <p className="profile-position">
-              MUNICIPAL GOVERNMENT OF MABINI
-            </p>
+            <p className="profile-position">MUNICIPAL GOVERNMENT OF MABINI</p>
 
             <h1>{viceMayor.name}</h1>
             <p className="profile-position">{viceMayor.position}</p>

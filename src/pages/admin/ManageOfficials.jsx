@@ -56,8 +56,10 @@ export default function ManageOfficials() {
         const groupB = groups.indexOf(b.group_name);
 
         if (groupA !== groupB) {
-          return (groupA === -1 ? groups.length : groupA) -
-            (groupB === -1 ? groups.length : groupB);
+          return (
+            (groupA === -1 ? groups.length : groupA) -
+            (groupB === -1 ? groups.length : groupB)
+          );
         }
 
         return (
@@ -91,11 +93,16 @@ export default function ManageOfficials() {
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   }
 
   function handleImageChange(e) {
     const file = e.target.files?.[0];
+
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
@@ -146,6 +153,7 @@ export default function ManageOfficials() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+
     setSaving(true);
     setError("");
     setMessage("");
@@ -185,7 +193,12 @@ export default function ManageOfficials() {
 
         result = await supabase
           .from("officials")
-          .insert([{ ...record, sort_order: nextOrder }]);
+          .insert([
+            {
+              ...record,
+              sort_order: nextOrder,
+            },
+          ]);
       }
 
       if (result.error) throw result.error;
@@ -221,7 +234,10 @@ export default function ManageOfficials() {
     setMessage("");
     setError("");
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
 
   async function handleDelete(official) {
@@ -241,9 +257,12 @@ export default function ManageOfficials() {
     }
 
     setMessage("Official deleted successfully.");
+
     await fetchOfficials();
 
-    if (editingId === official.id) resetForm();
+    if (editingId === official.id) {
+      resetForm();
+    }
   }
 
   async function moveOfficial(official, direction) {
@@ -252,12 +271,14 @@ export default function ManageOfficials() {
     setError("");
     setMessage("");
 
-    // Get all officials in the same category.
     const groupOfficials = officials
-      .filter((item) => item.group_name === official.group_name)
+      .filter(
+        (item) => item.group_name === official.group_name
+      )
       .sort((a, b) => {
         return (
-          (a.sort_order ?? a.id) - (b.sort_order ?? b.id)
+          (a.sort_order ?? a.id) -
+          (b.sort_order ?? b.id)
         );
       });
 
@@ -267,47 +288,60 @@ export default function ManageOfficials() {
 
     const targetIndex = currentIndex + direction;
 
-    // Prevent moving beyond the first or last position.
-    if (targetIndex < 0 || targetIndex >= groupOfficials.length) {
+    if (
+      targetIndex < 0 ||
+      targetIndex >= groupOfficials.length
+    ) {
       return;
     }
 
     const currentOfficial = groupOfficials[currentIndex];
     const targetOfficial = groupOfficials[targetIndex];
 
-    const currentOrder = currentOfficial.sort_order ?? currentOfficial.id;
-    const targetOrder = targetOfficial.sort_order ?? targetOfficial.id;
+    const currentOrder =
+      currentOfficial.sort_order ?? currentOfficial.id;
+
+    const targetOrder =
+      targetOfficial.sort_order ?? targetOfficial.id;
 
     setMovingId(official.id);
 
     try {
-      // Swap the two officials' sort order values.
       const { error: firstError } = await supabase
         .from("officials")
-        .update({ sort_order: targetOrder })
+        .update({
+          sort_order: targetOrder,
+        })
         .eq("id", currentOfficial.id);
 
       if (firstError) throw firstError;
 
       const { error: secondError } = await supabase
         .from("officials")
-        .update({ sort_order: currentOrder })
+        .update({
+          sort_order: currentOrder,
+        })
         .eq("id", targetOfficial.id);
 
       if (secondError) {
-        // Attempt to restore the first official's original position.
         await supabase
           .from("officials")
-          .update({ sort_order: currentOrder })
+          .update({
+            sort_order: currentOrder,
+          })
           .eq("id", currentOfficial.id);
 
         throw secondError;
       }
 
       setMessage(`${official.name} moved successfully.`);
+
       await fetchOfficials();
     } catch (err) {
-      setError(err.message || "Unable to rearrange officials.");
+      setError(
+        err.message || "Unable to rearrange officials."
+      );
+
       await fetchOfficials();
     } finally {
       setMovingId(null);
@@ -316,10 +350,13 @@ export default function ManageOfficials() {
 
   function getGroupPosition(official) {
     const groupOfficials = officials
-      .filter((item) => item.group_name === official.group_name)
+      .filter(
+        (item) => item.group_name === official.group_name
+      )
       .sort((a, b) => {
         return (
-          (a.sort_order ?? a.id) - (b.sort_order ?? b.id)
+          (a.sort_order ?? a.id) -
+          (b.sort_order ?? b.id)
         );
       });
 
@@ -338,18 +375,28 @@ export default function ManageOfficials() {
       <header className="manage-header">
         <div>
           <h1>Manage Municipal Officials</h1>
-          <p>Add, edit, and manage municipal official records.</p>
+          <p>
+            Add, edit, and manage municipal official records.
+          </p>
         </div>
 
-        <Link to="/admin/dashboard" className="back-button">
+        <Link
+          to="/admin/dashboard"
+          className="back-button"
+        >
           Back to Dashboard
         </Link>
       </header>
 
       <section className="manage-form-section">
-        <h2>{editingId ? "Edit Official" : "Add New Official"}</h2>
+        <h2>
+          {editingId ? "Edit Official" : "Add New Official"}
+        </h2>
 
-        <form className="manage-form" onSubmit={handleSubmit}>
+        <form
+          className="manage-form"
+          onSubmit={handleSubmit}
+        >
           <label>
             Official Name
             <input
@@ -370,6 +417,7 @@ export default function ManageOfficials() {
               required
             >
               <option value="">Select category</option>
+
               {groups.map((group) => (
                 <option key={group} value={group}>
                   {group}
@@ -422,6 +470,7 @@ export default function ManageOfficials() {
           {preview && (
             <div>
               <p>Image Preview</p>
+
               <img
                 src={preview}
                 alt="Official profile preview"
@@ -440,26 +489,38 @@ export default function ManageOfficials() {
             </button>
 
             {editingId && (
-              <button type="button" onClick={resetForm}>
+              <button
+                type="button"
+                onClick={resetForm}
+              >
                 Cancel
               </button>
             )}
           </div>
         </form>
 
-        {message && <p className="save-status">{message}</p>}
-        {error && <p className="admin-error">{error}</p>}
+        {message && (
+          <p className="save-status">{message}</p>
+        )}
+
+        {error && (
+          <p className="admin-error">{error}</p>
+        )}
       </section>
 
       <section className="officials-admin-list">
         <div className="officials-table-header">
           <div>
             <h2>Existing Officials</h2>
+
             <p>
-              Showing {filteredOfficials.length} of {officials.length} officials
+              Showing {filteredOfficials.length} of{" "}
+              {officials.length} officials
             </p>
+
             <p className="officials-reorder-note">
-              Use the ↑ and ↓ buttons to arrange officials within their category.
+              Use the ↑ and ↓ buttons to arrange officials
+              within their category.
             </p>
           </div>
         </div>
@@ -477,6 +538,7 @@ export default function ManageOfficials() {
             onChange={(e) => setFilterGroup(e.target.value)}
           >
             <option value="">All Categories</option>
+
             {groups.map((group) => (
               <option key={group} value={group}>
                 {group}
@@ -496,7 +558,7 @@ export default function ManageOfficials() {
             <table className="officials-table">
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>No.</th>
                   <th>Photo</th>
                   <th>Official Name</th>
                   <th>Position</th>
@@ -507,12 +569,14 @@ export default function ManageOfficials() {
               </thead>
 
               <tbody>
-                {filteredOfficials.map((official) => {
-                  const { isFirst, isLast } = getGroupPosition(official);
+                {filteredOfficials.map((official, index) => {
+                  const { isFirst, isLast } =
+                    getGroupPosition(official);
 
                   return (
                     <tr key={official.id}>
-                      <td>{official.id}</td>
+                      {/* Sequential row number */}
+                      <td>{index + 1}</td>
 
                       <td>
                         {official.image_url ? (
@@ -522,7 +586,9 @@ export default function ManageOfficials() {
                             className="official-table-image"
                           />
                         ) : (
-                          <span className="no-official-image">No Image</span>
+                          <span className="no-official-image">
+                            No Image
+                          </span>
                         )}
                       </td>
 
@@ -530,11 +596,17 @@ export default function ManageOfficials() {
                         {official.name}
                       </td>
 
-                      <td>{official.position || "—"}</td>
+                      <td>
+                        {official.position || "—"}
+                      </td>
 
-                      <td>{official.group_name || "—"}</td>
+                      <td>
+                        {official.group_name || "—"}
+                      </td>
 
-                      <td>{official.organizational_unit || "—"}</td>
+                      <td>
+                        {official.organizational_unit || "—"}
+                      </td>
 
                       <td>
                         <div className="official-table-actions">
@@ -543,8 +615,12 @@ export default function ManageOfficials() {
                             className="move-up-button"
                             title="Move up"
                             aria-label={`Move ${official.name} up`}
-                            disabled={isFirst || movingId !== null}
-                            onClick={() => moveOfficial(official, -1)}
+                            disabled={
+                              isFirst || movingId !== null
+                            }
+                            onClick={() =>
+                              moveOfficial(official, -1)
+                            }
                           >
                             ↑
                           </button>
@@ -554,15 +630,21 @@ export default function ManageOfficials() {
                             className="move-down-button"
                             title="Move down"
                             aria-label={`Move ${official.name} down`}
-                            disabled={isLast || movingId !== null}
-                            onClick={() => moveOfficial(official, 1)}
+                            disabled={
+                              isLast || movingId !== null
+                            }
+                            onClick={() =>
+                              moveOfficial(official, 1)
+                            }
                           >
                             ↓
                           </button>
 
                           <button
                             type="button"
-                            onClick={() => handleEdit(official)}
+                            onClick={() =>
+                              handleEdit(official)
+                            }
                           >
                             Edit
                           </button>
@@ -570,7 +652,9 @@ export default function ManageOfficials() {
                           <button
                             type="button"
                             className="delete-button"
-                            onClick={() => handleDelete(official)}
+                            onClick={() =>
+                              handleDelete(official)
+                            }
                           >
                             Delete
                           </button>
