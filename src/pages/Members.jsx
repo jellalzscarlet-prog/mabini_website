@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
@@ -21,7 +20,7 @@ export default function Members() {
       const { data, error } = await supabase
         .from("officials")
         .select("*")
-        .eq("group_name", group)
+        .order("sort_order", { ascending: true })
         .order("id", { ascending: true });
 
       if (!active) return;
@@ -80,15 +79,11 @@ export default function Members() {
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan="3">
-                    Unable to load members: {error}
-                  </td>
+                  <td colSpan="3">Unable to load members: {error}</td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan="3">
-                    No member records available yet.
-                  </td>
+                  <td colSpan="3">No member records available yet.</td>
                 </tr>
               ) : (
                 rows.map((member) => (
